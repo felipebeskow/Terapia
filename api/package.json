@@ -1,0 +1,19 @@
+{
+  "name": "api-terapia",
+  "version": "1.0.0",
+  "description": "API para sistema de arquivo de atendimentos",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/felipebeskow/Terapia.git"
+  },
+  "author": "Felipe Beskow",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/felipebeskow/Terapia/issues"
+  },
+  "homepage": "https://github.com/felipebeskow/Terapia#readme"
+}
