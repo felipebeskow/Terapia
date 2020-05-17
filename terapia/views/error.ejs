@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<head>
+  <title>ERRO</title>
+  <link rel='stylesheet' href='/stylesheets/style.css' />
+</head>
+<body>
+    <h2>Mensagem do Erro: <%= message %></h1>
+    <h3 id=err-status>Status do Erro: <%= error.status %></h2>
+    <pre id=err><%= error.stack %></pre>
+    <script>
+        let erro = document.querySelector("#err");
+        console.log(document.querySelector("#err-status").innerHTML);
+        console.log(erro.innerHTML);
+        erro.innerHTML = '';
+    </script>
+</body>
