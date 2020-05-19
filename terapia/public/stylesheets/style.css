@@ -8,6 +8,26 @@ a {
   color: #00B7FF;
 }
 
-#input-search {
+input#input-search {
   width: 60%;
+}
+
+input{
+  width: 60%;
+  margin: 10px;
+}
+
+input[type=date] {
+  height: 10px;
+  width: auto;
+}
+
+input#input-profession{
+  width: 35%;
+}
+
+textarea{
+  width: 65%;
+  margin: 5px;
+  height: 150px;
 }

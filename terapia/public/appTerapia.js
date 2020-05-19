@@ -4,11 +4,13 @@ class AppTerapia{
 
         this._appEl = document.querySelector('#app');
 
-        this._inputSearch;
-        this._datalistSearch;
+        this._inputSearchEl;
+        this._datalistSearchEl;
+        this._tableClientEl;
+        this._clients = {};
         
         this.home();
-
+        
     }
 
     home(){
@@ -17,78 +19,126 @@ class AppTerapia{
             <h1>Terapia</h1>
             <br>
             <form>
-            <input id="input-search" placeholder="Digite o cliente" list="clients"></input>
-            <datalist id="clients"></datalist>
+                <input id="input-search" placeholder="Digite o cliente" list="clients"></input>
+                <datalist id="clients"></datalist>
+                <br>
+                <table id="table-client" style="display: none;">
+                </table>
+                <br>
+                <button id="add-client">Adicionar Clientes</button>
             </form>
-            <br>
-            <td>
-            <tr> nome do cliente</tr><tr> idade</tr>
-            </td>
         `;
 
-        this._inputSearch = this._appEl.querySelector('#input-search');
-        this._datalistSearch = this._appEl.querySelector('#clients');
+        this._inputSearchEl = this._appEl.querySelector('#input-search');
+        this._datalistSearchEl = this._appEl.querySelector('#clients');
+        this._tableClientEl = this._appEl.querySelector('#table-client');
 
+        this.appClient;
+
+        this.addEventHome();
         this.getClients();
-        this.addEventHome()
 
     }
 
     getClients(){
+
         let ajax = new XMLHttpRequest();
 
-        ajax.open('GET', '/c');
+        ajax.open('GET', '/c', true);
 
         ajax.onload = event => {
 
             try{
                 
-                clients = JSON.parse(ajax.responseText);
+                this._clients = JSON.parse(ajax.responseText);
+                this.addClientDataList();
 
-                this.scrollClients((client)=>{
-                    let opt = document.createElement('option');
-
-                    opt.value = client['name'];
-                    
-                    this._datalistSearch.appendChild(opt);
-                });
-                
-                
+                                
             }catch(e){
                 console.error(e);
             }
-            
 
-        };
+        }
 
         ajax.send();
-    }
-
     
-    addEventHome(){
-        
-        this._inputSearch.addEventListener('keypress', e=>{
-
-            if (e.key == 'Enter'){
-                
-                let unique = 0;
-
-                this.scrollClients((clients)=>{
-                    if (clients['name' == this._inputSearch.value]) unique++;
-                });
-
-                if (unique) true;
-
-            }
-
-        });
-
     }
 
     scrollClients(f){
-        clients['clients'].forEach((e)=>{       
+        this._clients['clients'].forEach((e)=>{       
             f(e);
         });
     }
 
+
+    addClientDataList(){
+        this.scrollClients((client)=>{
+            let opt = document.createElement('option');
+
+            opt.value = client['name'];
+            opt.dataset.client = JSON.stringify(client);
+            
+            this._datalistSearchEl.appendChild(opt);
+        });
+    }
+    
+    addEventHome(){
+
+        document.querySelector('#add-client').addEventListener('click', e=>{
+            this.appClient = new AppClient();
+        });
+        
+        this._inputSearchEl.addEventListener('keypress', e=>{
+
+            if (e.key == 'Enter'){
+
+                e.preventDefault();
+
+                //limpar tabela
+                [...this._tableClientEl.childNodes].forEach(tr => {
+                    tr.remove();
+                });
+                
+                let unique = 0;
+
+                this.scrollClients((client)=>{
+
+                    //procura clientes pelos nomes
+                    if (client['name'].toUpperCase().indexOf(this._inputSearchEl.value.toUpperCase())>-1) {
+
+                        unique++;
+                        let tr = document.createElement('tr');
+
+                        tr.innerHTML=`
+                            <td><p> ${client['name']}</p></td>
+                            <td> - </td>
+                            <td><p> ${new Date().getFullYear() - client['birth'].substr(0,4)} anos</p></td>
+                        `;
+
+                        tr.addEventListener('click',()=>{
+                            let id = client['_id']
+                            console.log(`Abrindo atendimento com o cliente ${id}`);
+                        });
+
+                        tr.dataset.client = JSON.stringify(client);
+                        this._tableClientEl.appendChild(tr);
+
+                    }
+                    
+                });
+
+                if(this._inputSearchEl.value == '') unique = 0;
+
+                //mostra a tabela caso ache clientes
+                if(unique>0){
+                    this._tableClientEl.style.display = "inline-block";
+                }else{
+                    alert('Nenhum cliente encontrado com esse nome.');
+                }
+
+            }
+
+        });
+
+    }
 }
