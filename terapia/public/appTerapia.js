@@ -123,8 +123,7 @@ class AppTerapia{
                         `;
 
                         tr.addEventListener('click',()=>{
-                            this.appClient = new AppClient(false, client['_id']);
-                            this.appAttendance = new AppAttendance();
+                            this.appAttendance = new AppAttendance(client['_id']);
                         });
 
                         tr.dataset.client = JSON.stringify(client);
