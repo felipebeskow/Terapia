@@ -26,6 +26,7 @@ class AppTerapia{
                 </table>
                 <br>
                 <button id="add-client">Adicionar Clientes</button>
+                <button id="teste-cliente">Teste Cliente</button>
             </form>
         `;
 
@@ -75,7 +76,7 @@ class AppTerapia{
         this.scrollClients((client)=>{
             let opt = document.createElement('option');
 
-            opt.value = client['name'];
+            opt.value = client['_name'];
             opt.dataset.client = JSON.stringify(client);
             
             this._datalistSearchEl.appendChild(opt);
@@ -83,6 +84,10 @@ class AppTerapia{
     }
     
     addEventHome(){
+
+        document.querySelector('#teste-cliente').addEventListener('click', e=>{
+            this.appClient = new AppClient(true, 'mjz8hKxgUvV0wpbQ');
+        });
 
         document.querySelector('#add-client').addEventListener('click', e=>{
             this.appClient = new AppClient();
@@ -103,21 +108,23 @@ class AppTerapia{
 
                 this.scrollClients((client)=>{
 
+
                     //procura clientes pelos nomes
-                    if (client['name'].toUpperCase().indexOf(this._inputSearchEl.value.toUpperCase())>-1) {
+                    if (client['_name'].toUpperCase().indexOf(this._inputSearchEl.value.toUpperCase())>-1) {
+
 
                         unique++;
                         let tr = document.createElement('tr');
 
                         tr.innerHTML=`
-                            <td><p> ${client['name']}</p></td>
+                            <td><p> ${client['_name']}</p></td>
                             <td> - </td>
-                            <td><p> ${new Date().getFullYear() - client['birth'].substr(0,4)} anos</p></td>
+                            <td><p> ${new Date().getFullYear() - client['_birth'].substr(0,4)} anos</p></td>
                         `;
 
                         tr.addEventListener('click',()=>{
-                            let id = client['_id']
-                            console.log(`Abrindo atendimento com o cliente ${id}`);
+                            this.appClient = new AppClient(false, client['_id']);
+                            this.appAttendance = new AppAttendance();
                         });
 
                         tr.dataset.client = JSON.stringify(client);
