@@ -1,6 +1,6 @@
 class AppClient{
 
-    constructor(edit = true, id=-1){
+    constructor(edit = true, id=-1, attendance = false){
     
         if(edit){            
 
@@ -24,7 +24,7 @@ class AppClient{
                 </td><td>
                     <tr>Informações mais detalhadas: </tr><br><tr><textarea id="input-obs"></textarea></tr><br>
                 </td><td>
-                    <tr> <button id="btn-back" onclick="window.location.reload()"> Voltar </button></tr>&nbsp&nbsp&nbsp<tr> <button id="btn-save" type="submit"> Salvar </button></tr>
+                    <tr> <button id="btn-back"> Voltar </button></tr>&nbsp&nbsp&nbsp<tr> <button id="btn-save" type="submit"> Salvar </button></tr>
                 </td>
                 </table>
             </form>
@@ -38,6 +38,8 @@ class AppClient{
             this._obsEl = document.querySelector('#input-obs');
 
         }
+
+        this._attendance = attendance;
 
         this._id = id;
         this._name = '';
@@ -84,16 +86,30 @@ class AppClient{
 
                 let ajax = new XMLHttpRequest();
 
+                console.log(this._id);
+
                 if (this._id == -1){ 
                     ajax.open('POST', '/c');
                 }else{ 
                     ajax.open('PUT', `/c/${this._id}`);
                 }
 
+                ajax.onload = window.location.reload();
+
                 ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
                 ajax.send(data);
 
-                window.location.reload();
+            });
+
+            document.querySelector('#btn-back').addEventListener('click', e=>{
+                
+                e.preventDefault();
+                
+                if (this._attendance){
+                    new appTerapia.appAttendance.constructor(this._id);
+                }else{
+                    window.location.reload();
+                }
 
             });
         }
