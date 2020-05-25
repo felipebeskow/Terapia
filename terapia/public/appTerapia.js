@@ -18,15 +18,14 @@ class AppTerapia{
         this._appEl.innerHTML = `
             <h1>Terapia</h1>
             <br>
+            <button id="add-client">Adicionar Clientes</button>
+            <br><br><br>
             <form>
                 <input id="input-search" placeholder="Digite o cliente" list="clients"></input>
                 <datalist id="clients"></datalist>
                 <br>
                 <table id="table-client" style="display: none;">
                 </table>
-                <br>
-                <button id="add-client">Adicionar Clientes</button>
-                <button id="teste-cliente">Teste Cliente</button>
             </form>
         `;
 
@@ -84,10 +83,6 @@ class AppTerapia{
     }
     
     addEventHome(){
-
-        document.querySelector('#teste-cliente').addEventListener('click', e=>{
-            this.appClient = new AppClient(true, 'mjz8hKxgUvV0wpbQ');
-        });
 
         document.querySelector('#add-client').addEventListener('click', e=>{
             this.appClient = new AppClient();
