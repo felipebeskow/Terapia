@@ -113,6 +113,8 @@ class AppClient{
 
             });
         }
+
+        new AppHelp();
     }
 
     clientToJSON(){

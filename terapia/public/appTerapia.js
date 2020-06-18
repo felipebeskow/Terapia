@@ -29,6 +29,8 @@ class AppTerapia{
             </form>
         `;
 
+        new AppHelp();
+
         this._inputSearchEl = this._appEl.querySelector('#input-search');
         this._datalistSearchEl = this._appEl.querySelector('#clients');
         this._tableClientEl = this._appEl.querySelector('#table-client');

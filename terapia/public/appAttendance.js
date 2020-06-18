@@ -66,6 +66,8 @@ class AppAttendance{
             e.preventDefault();
             new AppAttendance(this._idClient);
         });
+
+        new AppHelp();
     }
 
     getClient(){
@@ -93,8 +95,6 @@ class AppAttendance{
     }
 
     save(){
-
-        if(this._inputAttendanceEl.value == '') return false;
         
         let ajax = new XMLHttpRequest();
 
@@ -161,7 +161,7 @@ class AppAttendance{
                 this._dateEl.value = attendance['_date'];
                 this._terapiaEl.value = attendance['_terapia'];
                 this._inputAttendanceEl.value = attendance['_attendance'];
-                this._inputProdutsEl = attendance['_produts'];
+				this._inputProdutsEl.value = attendance['_produts'];
                                 
             }catch(e){
                 console.error(e);
