@@ -1,4 +1,7 @@
-
+terapia/db/login.db
+terapia/db/attendance.db
+terapia/db/clients.db
+terapia/node_modules/
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
