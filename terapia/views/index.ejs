@@ -5,13 +5,35 @@
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
-    <div id="app"><h1><%= title %></h1><br>Erro ao executar Javascript</div>
+    <div id="noJS">
+      Erro ao executar Javascript
+    </div>
+    <div id='loginApp' style="visibility: hidden;">
+      <h1><%= title %></h1>
+      <h2>Login</h2>
+      <div>
+        <form >
+          <table>
+            <tr>
+              <td>Login</td>
+              <td><input type='text' id='login'></td>
+            </tr>
+            <tr>
+              <td>Senha</td>
+              <td><input type='password' id='password'></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td><input type="button" id='submit' value="Entrar"></td>
+            </tr>
+          </table>
+        </form>
+      </div>
+    </div>
   </body>
-  <script src="./appHelp.js"></script>
-  <script src="./appClient.js"></script>
-  <script src="./appAttendance.js"></script>
-  <script src="./appTerapia.js"></script>
+  <script src="./login.js"></script>
+  <script src="./utils.js"></script>
   <script>
-    let appTerapia = new AppTerapia();
+    let login = new Login();
   </script>
 </html>

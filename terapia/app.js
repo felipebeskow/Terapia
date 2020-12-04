@@ -8,6 +8,7 @@ const consign = require("consign");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
+var terapia = require('./routes/terapia');
 //var clientRouter = require('./routes/clients');
 
 var app = express();
@@ -24,6 +25,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/app', terapia);
 //app.use('/c', clientRouter);
 
 consign().include('apiRoutes').into(app);
