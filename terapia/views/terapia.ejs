@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel='stylesheet' href='../stylesheets/style.css' />
+  </head>
+  <body>
+    <div id="app"><h1><%= title %></h1><br>Erro ao executar Javascript</div>
+  </body>
+  <script src="./appHelp.js"></script>
+  <script src="./appClient.js"></script>
+  <script src="./appAttendance.js"></script>
+  <script src="./appTerapia.js"></script>
+  <script>
+    let appTerapia = new AppTerapia();
+  </script>
+</html>

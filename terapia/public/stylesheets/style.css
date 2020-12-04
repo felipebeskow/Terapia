@@ -31,3 +31,9 @@ textarea{
   margin: 5px;
   height: 150px;
 }
+
+form{
+  text-align: center;
+  margin: 0 auto;
+  width: fit-content;
+}
