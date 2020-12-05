@@ -1,46 +1,67 @@
 class Login{
     constructor(){
-        if(localStorage.getItem('login')){
-            console.log("localstore");
+        if(localStorage.getItem('id')=='undefined'){
+            this.idLogin = "-1";
+        } else {
+            this.idLogin = localStorage.getItem('id');
+        }
+        
+        if(this.idLogin != -1){
+            console.log(this.idLogin);
+            this.efetuarlogin();
         } else {
             document.querySelector('#noJS').style.visibility='hidden';
 
-            this.loginEL = document.querySelector('#loginApp');
-            
-            this.loginEL.style.visibility = 'visible';
+            document.querySelector('#loginApp').style.visibility = 'visible';
 
             document.querySelector('#submit').addEventListener('click',this.efetuarlogin);
         }
     }
 
-    efetuarlogin(loginById=false,id='',login='',password=''){
+    efetuarlogin(){
 
         let ajax = new XMLHttpRequest();
         let json = {};
 
-        if(loginById){
-
-            json['_id'] = id;
+        if (document.querySelector('#loginApp').style.visibility == 'visible') {
+            
+            json['_login'] = document.querySelector('#login').value;
+            json['_password'] = document.querySelector('#password').value;
             json = new Utils().prepareData(json);
-            ajax.open('PUT', '/l/id');
+            ajax.open('POST', '/l');
 
-        }else{
+        } else if( this.idLogin != -1 ) {
 
-            json['_login'] = login;
-            json['_password'] = password;
+            json['_id'] = this.idLogin;
             json = new Utils().prepareData(json);
-            ajax.open('PUT', '/l');
+            ajax.open('PUT', '/lr');
 
         }
 
-        ajax.onloadend = e =>{
-            window.login['_id'] = id;
-            window.login['_login'] = true;
+        if (ajax.readyState == 1) {
+            ajax.onloadend = e =>{
+                try{
+                    
+                    if(JSON.parse(ajax.responseText)['error']==undefined){
+                        
+                        let id = JSON.parse(ajax.responseText)['_id'];
 
-            window.location.replace(window.location.protocol+window.location.hostname+'/app');
+                        window.localStorage.setItem('id',id);
+                        window.sessionStorage.setItem('login','true');
+
+                        window.location.replace(window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/app');
+                    }
+
+                } catch(err){
+                    window.localStorage.setItem('id',-1);
+                    window.sessionStorage.setItem('login','false');
+                    window.alert("faça login");
+                    window.location.reload();
+                }
+            }
+
+            ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            ajax.send(json);
         }
-
-        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        ajax.send(json);
     }
 }

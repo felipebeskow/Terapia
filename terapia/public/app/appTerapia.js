@@ -2,15 +2,31 @@ class AppTerapia{
 
     constructor(){
 
-        this._appEl = document.querySelector('#app');
+        if(localStorage.getItem('id')=='undefined'){
+            this.idLogin = "-1";
+        } else {
+            this.idLogin = localStorage.getItem('id');
+        }
 
-        this._inputSearchEl;
-        this._datalistSearchEl;
-        this._tableClientEl;
-        this._clients = {};
-        
-        this.home();
-        
+        if ( window.sessionStorage.getItem('login') == 'true' ){
+            
+            this._appEl = document.querySelector('#app');
+
+            this._inputSearchEl;
+            this._datalistSearchEl;
+            this._tableClientEl;
+            this._clients = {};
+            
+            this.home();
+        } else {
+            
+            window.localStorage.setItem('id',-1);
+            window.sessionStorage.setItem('login','false');
+            window.alert("faça login");
+            window.location.reload();
+            
+        }
+
     }
 
     home(){

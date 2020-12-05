@@ -9,7 +9,8 @@ class AppHelp {
         this.data = {};
 
         buttonHelp.innerHTML = `
-            <button id="help">Me Ajuda!</button>
+            <button id='help'>Me Ajuda!</button>
+            <button id='logout'>Sair</button>
         `;
         
         buttonHelp.style.position = "absolute";
@@ -17,17 +18,20 @@ class AppHelp {
         buttonHelp.style.right = "0";
         buttonHelp.style.margin = "20px";
 
-        buttonHelp.addEventListener('click', e=> {
+        this._appEl.appendChild(buttonHelp);
+
+        document.querySelector('#help').addEventListener('click', e=> {
 
             this.data['class'] = JSON.stringify(appTerapia);
             this.data['context'] = JSON.stringify(appTerapia._appEl.innerHTML);
-
+            
             this._appEl.innerHTML =`
                 <input id="mensagem"></input>
                 <button id="btnmensagem">Enviar</button>
             `;
 
-            this.data['mensagem'] = document.querySelector("#mensagem").innerHTML;
+            this.data['mensagem'] = document.querySelector('#mensagem').value;
+
             document.querySelector("#btnmensagem").addEventListener('click', e=> {
                 this.sendEmail();
                 window.location.reload();
@@ -35,8 +39,13 @@ class AppHelp {
 
         });
 
-        this._appEl.appendChild(buttonHelp);
+        document.querySelector('#logout').addEventListener('click', e=>{
 
+            window.localStorage.setItem('id',-1);
+            window.sessionStorage.setItem('login','false');
+            window.location.replace(window.location.protocol + '//' + window.location.hostname + ':' + window.location.port);
+
+        });
 
     }
 
