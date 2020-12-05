@@ -19,11 +19,11 @@ class AppTerapia{
             
             this.home();
         } else {
-            
+
             window.localStorage.setItem('id',-1);
             window.sessionStorage.setItem('login','false');
             window.alert("faça login");
-            window.location.reload();
+            window.location.replace(window.location.protocol + '//' + window.location.hostname + ':' + window.location.port );
             
         }
 
