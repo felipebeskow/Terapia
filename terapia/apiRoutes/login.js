@@ -1,4 +1,6 @@
 let NeDB = require('nedb');
+let CryptoJS = require('crypto-js');
+
 let dbLogin = new NeDB({
     filename:'db/login.db',
     autoload:true,
@@ -75,6 +77,7 @@ module.exports = app => {
     });
     app.post('/l/:passadmin',(req,res)=>{
         if (req.params.passadmin == 'picturas') {
+            req.body['_password'] = CryptoJS.MD5(req.body['_password']).toString();
             dbLogin.insert(req.body,(e,user)=>{
                 if (e){
                     console.log("Erro ao registar:",req.body);
