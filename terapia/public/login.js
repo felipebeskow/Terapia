@@ -1,3 +1,5 @@
+//let CryptoJS = require('crypto-js');
+
 class Login{
     constructor(){
         if(localStorage.getItem('id')=='undefined'){
@@ -26,7 +28,7 @@ class Login{
         if (document.querySelector('#loginApp').style.visibility == 'visible') {
             
             json['_login'] = document.querySelector('#login').value;
-            json['_password'] = document.querySelector('#password').value;
+            json['_password'] = CryptoJS.MD5(document.querySelector('#password').value).toString();
             json = new Utils().prepareData(json);
             ajax.open('POST', '/l');
 
