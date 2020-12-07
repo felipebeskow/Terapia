@@ -2,7 +2,7 @@
 
 class Login{
     constructor(){
-        if(localStorage.getItem('id')=='undefined'){
+        if( (localStorage.getItem('id')=='undefined') || (localStorage.getItem('id')==null) ){
             this.idLogin = "-1";
         } else {
             this.idLogin = localStorage.getItem('id');
