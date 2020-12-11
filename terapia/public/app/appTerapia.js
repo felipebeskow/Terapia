@@ -61,10 +61,14 @@ class AppTerapia{
     getClients(){
 
         let ajax = new XMLHttpRequest();
+        let json = {};
 
-        ajax.open('GET', '/c', true);
+        json['_id'] = localStorage.getItem('id');
+        json = new Utils().prepareData(json);
 
-        ajax.onload = event => {
+        ajax.open('PUT', '/c', true);
+
+        ajax.onloadend = event => {
 
             try{
                 
@@ -77,8 +81,9 @@ class AppTerapia{
             }
 
         }
-
-        ajax.send();
+        
+        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajax.send(json);
     
     }
 
