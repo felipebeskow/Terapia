@@ -4,12 +4,10 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const consign = require("consign");
-//const XMLHttpRequest = requite("xmlhttprequest");
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var terapia = require('./routes/terapia');
-//var clientRouter = require('./routes/clients');
 
 var app = express();
 
@@ -26,7 +24,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/app', terapia);
-//app.use('/c', clientRouter);
+
+app.host = 'http://localhost:3000'
 
 consign().include('apiRoutes').into(app);
 

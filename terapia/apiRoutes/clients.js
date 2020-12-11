@@ -15,8 +15,8 @@ module.exports = app =>{
         let ajax = new XMLHttpRequest();
         let message = '';
         let passou = false;
-        
-        ajax.open('PUT', 'http://localhost:3000/lr');
+
+        ajax.open('PUT', app.host + '/lr');
 
         message = `_id=${req.body['_id']}`;
     
@@ -47,6 +47,7 @@ module.exports = app =>{
                 res.status(400).json({
                     'error': error,
                     'ajax': ajax.responseText,
+                    'host': app.host,
                     'passou': passou
                 });
             }
