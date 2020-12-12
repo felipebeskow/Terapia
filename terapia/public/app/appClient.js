@@ -86,12 +86,10 @@ class AppClient{
 
                 let ajax = new XMLHttpRequest();
 
-                console.log(this._id);
-
                 if (this._id == -1){ 
                     ajax.open('POST', '/c');
                 }else{ 
-                    ajax.open('PUT', `/c/${this._id}`);
+                    ajax.open('PUT', `/cEd/${this._id}`);
                 }
 
                 ajax.onload = window.location.reload();
@@ -121,8 +119,9 @@ class AppClient{
 
         let json = {};
 
-        if(this._id > -1) json['_id'] = this._id ;
+        if(this._id != -1) json['_id'] = this._id ;
 
+        json['_idLogin'] = localStorage.getItem('id');
         json['_name'] = this._name ;
         json['_birth'] = (this._birth  == null) ? '' :this._birth ;
         json['_profession'] = this._profession ;
@@ -149,8 +148,10 @@ class AppClient{
     getClient(){
 
         let ajax = new XMLHttpRequest();
+        
+        let message = `_idLogin=${localStorage.getItem('id')}`;
 
-        ajax.open('GET', `/c/${this._id}`, true);
+        ajax.open('PUT', `/c/${this._id}`, true);
 
         ajax.onload = event => {
 
@@ -174,7 +175,8 @@ class AppClient{
 
         }
 
-        ajax.send();
+        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajax.send(message);
     }
 
     updateClass(){

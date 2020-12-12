@@ -49,7 +49,7 @@ class AppAttendance{
         if (this._id != -1) this.getAttendance();
         else this._dateEl.valueAsDate = new Date();
 
-        this.getClient();
+        //this.getClient();
         this.getAttendances();
 
         document.querySelector('#btn-client').addEventListener('click', e=>{
@@ -74,23 +74,24 @@ class AppAttendance{
         
         let ajax = new XMLHttpRequest();
 
-        ajax.open('GET', `/c/${this._idClient}`);
+        let message = `_idLogin=${localStorage.getItem('id')}`;
 
-        ajax.onload = event => {
+        ajax.open('PUT', `/c/${this._idClient}`);
+
+        ajax.onloadend = event => {
             try{
-                
                 this._client = JSON.parse(ajax.responseText)['user'];
                 document.querySelector('#show-client').innerHTML = `
                     Cliente:  ${this._client['_name']}<br>
                     Profissão: ${this._client['_profession']}
-                `;
-                
+                `;                
             }catch(e){
                 console.error(e);
             }
         };
 
-        ajax.send();
+        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajax.send(message);
         
     }
 
@@ -103,7 +104,7 @@ class AppAttendance{
         if (this._id == -1){ 
             ajax.open('POST', '/a');
         }else{ 
-            ajax.open('PUT', `/a/${this._id}`);
+            ajax.open('POST', `/a/${this._id}`);
         }
 
         ajax.onloadend = event =>{
@@ -120,6 +121,7 @@ class AppAttendance{
     attendanceToJSON(){
         let json = {};
 
+        json['_idLogin'] = localStorage.getItem('id');
         json['_date'] = this._dateEl.value;
         json['_terapia'] = this._terapiaEl.value;
         json['_attendance'] = this._inputAttendanceEl.value;
@@ -144,18 +146,18 @@ class AppAttendance{
     getAttendance(){
 
         let ajax = new XMLHttpRequest();
+        
+        let message = `_idLogin=${localStorage.getItem('id')}`;
 
-        ajax.open('GET', `/a/${this._id}`, true);
+        ajax.open('PUT', `/a/${this._id}`, true);
 
-        ajax.onload = event => {
+        ajax.onloadend = event => {
 
             try{
                 
                 let attendance = JSON.parse(ajax.responseText);
 
                 attendance = attendance['attendance'];
-
-                console.log(attendance);
 
                 this._id = attendance['_id'];
                 this._dateEl.value = attendance['_date'];
@@ -169,21 +171,24 @@ class AppAttendance{
 
         }
 
-        ajax.send();
+        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajax.send(message);
     }
 
     getAttendances(){
         let ajax = new XMLHttpRequest();
+        let message = `_idLogin=${localStorage.getItem('id')}`;
 
-        ajax.open('GET', '/a', true);
+        ajax.open('PUT', '/a', true);
 
         ajax.onload = event => {
 
             try{
-                
+            
                 let attendances = JSON.parse(ajax.responseText);
 
                 let first = true;
+
 
                 [...attendances['attendances']].forEach((attendance)=>{
                 
@@ -219,6 +224,7 @@ class AppAttendance{
 
         }
 
-        ajax.send();
+        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajax.send(message);
     }
 }

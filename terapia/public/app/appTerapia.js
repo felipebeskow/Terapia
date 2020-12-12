@@ -60,30 +60,34 @@ class AppTerapia{
 
     getClients(){
 
-        let ajax = new XMLHttpRequest();
-        let json = {};
+        try{
+            let ajax = new XMLHttpRequest();
+            let json = {};
 
-        json['_id'] = localStorage.getItem('id');
-        json = new Utils().prepareData(json);
+            json['_idLogin'] = localStorage.getItem('id');
+            json = new Utils().prepareData(json);
 
-        ajax.open('PUT', '/c', true);
+            ajax.open('PUT', '/c');
 
-        ajax.onloadend = event => {
+            ajax.onloadend = event => {
 
-            try{
-                
-                this._clients = JSON.parse(ajax.responseText);
-                this.addClientDataList();
+                try{
+                    
+                    this._clients = JSON.parse(ajax.responseText);
+                    this.addClientDataList();
 
-                                
-            }catch(e){
-                console.error(e);
+                                    
+                }catch(e){
+                    console.error(e);
+                }
+
             }
-
+            
+            ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            ajax.send(json);
+        } catch(e){
+            console.error(e);
         }
-        
-        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        ajax.send(json);
     
     }
 

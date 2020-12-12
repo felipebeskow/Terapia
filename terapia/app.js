@@ -26,6 +26,41 @@ app.use('/users', usersRouter);
 app.use('/app', terapia);
 
 app.host = 'http://localhost:3000'
+app.auth = function(XMLHttpRequest,req,res,f) {
+  let ajax = new XMLHttpRequest();
+  let message = '';
+  let passou = false;
+
+  ajax.open('PUT', app.host + '/lr');
+
+  message = `_id=${req.body['_idLogin']}`;
+
+
+  ajax.onload = e => {
+    try{
+      if( (JSON.parse(ajax.responseText)!=undefined) && (JSON.parse(ajax.responseText)['error']==undefined) ){
+        passou = true;
+        f();
+      } else {
+        console.log(req.body);
+        res.status(400).json({
+          'error': 'Login Negado'
+        });                    
+      }
+    } catch(error) {
+      console.error(error);
+      res.status(400).json({
+        'error': error,
+        'ajax': ajax.responseText,
+        'host': app.host,
+        'passou': passou
+      });
+    }
+  }
+
+  ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  ajax.send(message);
+};
 
 consign().include('apiRoutes').into(app);
 

@@ -70,7 +70,8 @@ module.exports = app => {
             } else {
                 console.log("Id negado:",req.body['_id']); 
                 res.status(400).json({
-                    error: 'id not found'
+                    error: 'id not found',
+                    login: login
                 }); 
             }
         });

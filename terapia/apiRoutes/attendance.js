@@ -1,4 +1,6 @@
 let NeDB = require('nedb');
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+
 let db = new NeDB({
     filename:'db/attendance.db',
     autoload:true,
@@ -6,65 +8,86 @@ let db = new NeDB({
 
 module.exports = app =>{
 
-    app.get('/a',(req,res)=>{
+    app.put('/a',(req,res)=>{
         
-        db.find({}).sort({name:1}).exec((err,attendances)=>{
-            if (err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else{
-                res.status(200).json({attendances});
-            }
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.find({}).sort({_date:-1}).exec((err,attendances)=>{
+                if (err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else{
+                    res.status(200).json({attendances});
+                }
+            });
         });
 
     });
 
     app.post('/a',(req,res)=>{
-
-        db.insert(req.body, (err,attendance)=>{
-            if(err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else
-                res.status(200).json({attendance});
+        
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.insert({
+                '_date':req.body['_date'],
+                '_terapia':req.body['_terapia'],
+                '_attendance':req.body['_attendance'],
+                '_produts':req.body['_produts'],
+                '_idClient':req.body['_idClient']
+            }, (err,attendance)=>{
+                if(err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else
+                    res.status(200).json({attendance});
+            });
         });
 
-    });
-
-    app.get('/a/:id',(req,res)=>{
-        db.findOne({_id:req.params.id}).exec((err,attendance)=>{
-            if (err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else{
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json({
-                    attendance
-                });
-            }
-        });
     });
 
     app.put('/a/:id',(req,res)=>{
-        db.update({_id:req.params.id}, req.body, err => {
-            if (err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else{
-                res.status(200).json(req.body);
-            }
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.findOne({_id:req.params.id}).exec((err,attendance)=>{
+                if (err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else{
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({
+                        attendance
+                    });
+                }
+            });
         });
     });
 
+    app.post('/a/:id',(req,res)=>{
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.update({_id:req.params.id}, {
+                '_date':req.body['_date'],
+                '_terapia':req.body['_terapia'],
+                '_attendance':req.body['_attendance'],
+                '_produts':req.body['_produts'],
+                '_idClient':req.body['_idClient']
+            }, err => {
+                if (err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else{
+                    res.status(200).json(req.body);
+                }
+            });
+        });
+    });
+
+    /*
     app.delete('/a/:id',(req,res)=>{
         db.remove({_id:req.params.id},{},(err,n)=>{
             if(err){
@@ -78,5 +101,6 @@ module.exports = app =>{
             }
         });
     });
+    */
 
 };

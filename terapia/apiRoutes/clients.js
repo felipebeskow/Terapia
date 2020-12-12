@@ -6,101 +6,87 @@ let db = new NeDB({
     autoload:true,
 });
 
-
-
 module.exports = app =>{
 
     app.put('/c',(req,res)=>{
-
-        let ajax = new XMLHttpRequest();
-        let message = '';
-        let passou = false;
-
-        ajax.open('PUT', app.host + '/lr');
-
-        message = `_id=${req.body['_id']}`;
-    
-
-        ajax.onload = e => {
-            try{
-                ajax.responseText.parse
-                if( (JSON.parse(ajax.responseText)!=undefined) && (JSON.parse(ajax.responseText)['error']==undefined) ){
-                    passou = true;
-                    db.find({}).sort({name:1}).exec((err,clients)=>{
-                        if (err){
-                            console.error(err);
-                            res.status(400).json({
-                                'error': err
-                            });
-                        }else{
-                            res.status(200).json({clients});
-                        }
-                    });
-                } else {
-                    console.log('Login negado');
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.find({}).sort({_name:1}).exec((err,clients)=>{
+                if (err){
+                    console.error(err);
                     res.status(400).json({
-                        'error': 'Login Negado'
-                    });                    
+                        'error': err
+                    });
+                }else{
+                    res.status(200).json({clients});
                 }
-            } catch(error) {
-                console.error(error);
-                res.status(400).json({
-                    'error': error,
-                    'ajax': ajax.responseText,
-                    'host': app.host,
-                    'passou': passou
-                });
-            }
-        }
-
-        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        ajax.send(message);
+            });
+        });
     });
 
     app.post('/c',(req,res)=>{
+        app.auth(XMLHttpRequest,req,res,()=>{
+           
+            db.insert({
+                '_name':req.body['_name'],
+                '_birth':req.body['_birth'],
+                '_profession':req.body['_profession'],
+                '_address':req.body['_address'],
+                '_telephone':req.body['_telephone'],
+                '_obs':req.body['_obs']
+            }, (err,client)=>{
+                if(err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else
+                    res.status(200).json({client});
+            });
 
-        db.insert(req.body, (err,client)=>{
-            if(err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else
-                res.status(200).json({client});
-        });
-
-    });
-
-    app.get('/c/:id',(req,res)=>{
-        db.findOne({_id:req.params.id}).exec((err,user)=>{
-            if (err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else{
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json({
-                    user
-                });
-            }
         });
     });
 
     app.put('/c/:id',(req,res)=>{
-        db.update({_id:req.params.id}, req.body, err => {
-            if (err){
-                console.error(err);
-                res.status(400).json({
-                    error: err
-                });
-            }else{
-                res.status(200).json(req.body);
-            }
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.findOne({_id:req.params.id}).exec((err,user)=>{
+                if (err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else{
+                    res.statusCode = 200;
+                    res.setHeader('Content-Type', 'application/json');
+                    res.json({
+                        user
+                    });
+                }
+            });
         });
     });
 
+    app.put('/cEd/:id',(req,res)=>{
+        app.auth(XMLHttpRequest,req,res,()=>{
+            db.update({_id:req.params.id}, {
+                '_name':req.body['_name'],
+                '_birth':req.body['_birth'],
+                '_profession':req.body['_profession'],
+                '_address':req.body['_address'],
+                '_telephone':req.body['_telephone'],
+                '_obs':req.body['_obs']
+            }, err => {
+                if (err){
+                    console.error(err);
+                    res.status(400).json({
+                        error: err
+                    });
+                }else{
+                    res.status(200).json(req.body);
+                }
+            });
+        });
+    });
+    /*
     app.delete('/c/:id',(req,res)=>{
         db.remove({_id:req.params.id},{},(err,n)=>{
             if(err){
@@ -114,7 +100,6 @@ module.exports = app =>{
             }
         });
     });
-
-
+    */
 
 };
