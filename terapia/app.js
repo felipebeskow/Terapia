@@ -15,6 +15,13 @@ var app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 
+app.use((req, res, next) => { //Cria um middleware onde todas as requests passam por ele
+    if ((req.headers["x-forwarded-proto"] || "").endsWith("http")) //Checa se o protocolo informado nos headers é HTTP
+        res.redirect(`https://${req.hostname}${req.url}`); //Redireciona pra HTTPS
+    else //Se a requisição já é HTTPS
+        next(); //Não precisa redirecionar, passa para os próximos middlewares que servirão com o conteúdo desejado
+});
+
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
