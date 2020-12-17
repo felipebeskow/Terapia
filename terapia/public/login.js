@@ -17,6 +17,20 @@ class Login{
             document.querySelector('#loginApp').style.visibility = 'visible';
 
             document.querySelector('#submit').addEventListener('click',this.efetuarlogin);
+
+            document.querySelector('#login').addEventListener('keydown', e=>{
+                if (e.key == 'Enter') {
+                    e.preventDefault();
+                    document.querySelector('#password').focus();
+                }
+            });
+
+            document.querySelector('#password').addEventListener('keydown', e=>{
+                if (e.key == 'Enter') {
+                    e.preventDefault();
+                    this.efetuarlogin();
+                }
+            });
         }
     }
 
