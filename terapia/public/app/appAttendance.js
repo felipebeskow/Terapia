@@ -49,7 +49,7 @@ class AppAttendance{
         if (this._id != -1) this.getAttendance();
         else this._dateEl.valueAsDate = new Date();
 
-        //this.getClient();
+        this.getClient();
         this.getAttendances();
 
         document.querySelector('#btn-client').addEventListener('click', e=>{
@@ -59,12 +59,22 @@ class AppAttendance{
 
         document.querySelector('#btn-save').addEventListener('click', e=>{
             e.preventDefault();
-            this.save();
+            if(this.validateAttendance())
+                this.save();
+            else 
+                alert('Favor preencher os campos de Terapia, Data e Atendimento corretamente');
         });
 
         document.querySelector("#btn-clean").addEventListener('click', e=>{
             e.preventDefault();
             new AppAttendance(this._idClient);
+        });
+
+        this._dateEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._inputAttendanceEl.focus();
+            }
         });
 
         new AppHelp();
@@ -116,6 +126,14 @@ class AppAttendance{
         ajax.send(data);
 
         
+    }
+
+    validateAttendance(){
+        if ( this._terapiaEl.value != '' )
+        if ( (new Date(this._dateEl.value).getTime()) <= new Date().getTime() )
+        if ( this._inputAttendanceEl.value != '' )
+            return true;
+        return false;
     }
 
     attendanceToJSON(){
@@ -202,8 +220,16 @@ class AppAttendance{
                                 this._inputProdutsEl.value = attendance['_produts'];
                             }
                         }
+
+                        let terapia = '';
+
+                        if (attendance['_terapia']=='') {
+                            terapia = 'Terapia';
+                        } else {
+                            terapia = attendance['_terapia'].substr(0,1).toUpperCase() + attendance['_terapia'].substr(1);
+                        }
                         
-                        btn.innerHTML = attendance['_terapia'].substr(0,1).toUpperCase() + attendance['_terapia'].substr(1) + ' - ' + attendance['_date'].substr(8,2) + '/' + attendance['_date'].substr(5,2) + '/' + attendance['_date'].substr(0,4);
+                        btn.innerHTML = terapia  + ' - ' + attendance['_date'].substr(8,2) + '/' + attendance['_date'].substr(5,2) + '/' + attendance['_date'].substr(0,4);
                         
                         btn.onclick = () => {
                             new AppAttendance(this._idClient, attendance['_id']);

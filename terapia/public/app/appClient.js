@@ -112,6 +112,41 @@ class AppClient{
             });
         }
 
+        this._nameEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._birthEl.focus();
+            }
+        });
+
+        this._birthEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._professionEl.focus();
+            }
+        });
+
+        this._professionEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._addressEl.focus();
+            }
+        });
+
+        this._addressEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._telephoneEl.focus();
+            }
+        });
+        
+        this._telephoneEl.addEventListener('keydown', e=>{
+            if (e.key == 'Enter') {
+                e.preventDefault();
+                this._obsEl.focus();
+            }
+        });
+
         new AppHelp();
     }
 

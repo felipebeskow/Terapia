@@ -52,6 +52,10 @@ class Login{
                         window.sessionStorage.setItem('login','true');
 
                         window.location.replace(window.location.protocol + '//' + window.location.hostname + ':' + window.location.port + '/app');
+                    } else {
+                        window.localStorage.setItem('id',-1);
+                        window.sessionStorage.setItem('login','false');
+                        window.location.reload();
                     }
 
                 } catch(err){

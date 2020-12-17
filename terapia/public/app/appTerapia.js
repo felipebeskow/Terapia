@@ -37,8 +37,7 @@ class AppTerapia{
             <button id="add-client">Adicionar Clientes</button>
             <br><br><br>
             <form>
-                <input id="input-search" placeholder="Digite o cliente" list="clients"></input>
-                <datalist id="clients"></datalist>
+                <input id="input-search" placeholder="Digite o cliente" list="clients" autocomplete="off"></input>
                 <br>
                 <table id="table-client" style="display: none;">
                 </table>
@@ -74,7 +73,6 @@ class AppTerapia{
                 try{
                     
                     this._clients = JSON.parse(ajax.responseText);
-                    this.addClientDataList();
 
                                     
                 }catch(e){
@@ -96,18 +94,6 @@ class AppTerapia{
             f(e);
         });
     }
-
-
-    addClientDataList(){
-        this.scrollClients((client)=>{
-            let opt = document.createElement('option');
-
-            opt.value = client['_name'];
-            opt.dataset.client = JSON.stringify(client);
-            
-            this._datalistSearchEl.appendChild(opt);
-        });
-    }
     
     addEventHome(){
 
@@ -115,13 +101,15 @@ class AppTerapia{
             this.appClient = new AppClient();
         });
         
-        this._inputSearchEl.addEventListener('keypress', e=>{
+        this._inputSearchEl.addEventListener('keydown', e=> {
+            if (e.key == 'Enter') e.preventDefault();
+        });
 
-            if (e.key == 'Enter'){
+        this._inputSearchEl.addEventListener('input', e=>{
 
-                e.preventDefault();
+            if (this._inputSearchEl.value != ''){
 
-                //limpar tabela
+               //limpar tabela
                 [...this._tableClientEl.childNodes].forEach(tr => {
                     tr.remove();
                 });
@@ -161,9 +149,15 @@ class AppTerapia{
                 if(unique>0){
                     this._tableClientEl.style.display = "inline-block";
                 }else{
-                    alert('Nenhum cliente encontrado com esse nome.');
+                    this._tableClientEl.innerHTML = `
+                        <tr>
+                            <td> <p> Nenhum cliente encontrado com esse nome. </p> </td>
+                        </tr>
+                        `;
                 }
 
+            } else {
+                this._tableClientEl.style.display = "none";
             }
 
         });
