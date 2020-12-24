@@ -33,7 +33,9 @@ module.exports = app =>{
                 '_terapia':req.body['_terapia'],
                 '_attendance':req.body['_attendance'],
                 '_produts':req.body['_produts'],
-                '_idClient':req.body['_idClient']
+                '_idClient':req.body['_idClient'],
+                '_OE':req.body['_OE'],
+                '_OD':req.body['_OD']
             }, (err,attendance)=>{
                 if(err){
                     console.error(err);
@@ -73,7 +75,9 @@ module.exports = app =>{
                 '_terapia':req.body['_terapia'],
                 '_attendance':req.body['_attendance'],
                 '_produts':req.body['_produts'],
-                '_idClient':req.body['_idClient']
+                '_idClient':req.body['_idClient'],
+                '_OE':req.body['_OE'],
+                '_OD':req.body['_OD']
             }, err => {
                 if (err){
                     console.error(err);

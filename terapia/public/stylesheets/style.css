@@ -37,3 +37,12 @@ form#form-login{
   margin: 0 auto;
   width: fit-content;
 }
+
+figure{
+  display: inline-block;
+  width: 35%;
+}
+
+img{
+  width: 100%;
+}

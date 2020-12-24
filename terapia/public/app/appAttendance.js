@@ -24,6 +24,18 @@ class AppAttendance{
                     <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button><br>
                     <label for="input-attendance">Atendimento: </label><br><textarea id="input-attendance"></textarea><br>
                     <label for="input-produts">Produtos: </label><br><textarea id="input-produts"></textarea><br>
+                    <div id='iridofoto' style='display: none'>
+                        <figure>
+                            <img id='olhoEsquerdo' src='../img/1.png' id='imgOE'>
+                            <figcaption> Olho esquerdo </figcaption><br>
+                            <input type='file' id='fileOE'></input>
+                        </figure>
+                        <figure>
+                            <img id='olhoDireito' src='../img/2.png' id='imgOD'>
+                            <figcaption> Olho direito </figcaption>
+                            <input type='file' id='fileOD'></input>
+                        </figure>
+                    </div><br> 
                     <button id="btn-back" onclick="window.location.reload()"> Voltar </button>
                     <button id="btn-clean"> Limpar </button>
                     <button id="btn-save" type="submit"> Salvar </button>
@@ -39,6 +51,11 @@ class AppAttendance{
         this._inputAttendanceEl = document.querySelector('#input-attendance');
         this._inputProdutsEl = document.querySelector('#input-produts');
         this._historyEl = document.querySelector('#history');
+        this._iridofotoEl = document.querySelector('#iridofoto');
+        this._fileOEEl = document.querySelector('#fileOE');
+        this._fileODEl = document.querySelector('#fileOD');
+        this._olhoEsquerdo = document.querySelector("#olhoEsquerdo");
+        this._olhoDireito = document.querySelector("#olhoDireito");
 
         this.load();
 
@@ -75,6 +92,36 @@ class AppAttendance{
                 e.preventDefault();
                 this._inputAttendanceEl.focus();
             }
+        });
+
+        this._terapiaEl.addEventListener('change', e=>{
+            if(this._terapiaEl.value == 'iridofoto'){
+                this._iridofotoEl.style.display = "inline-block";
+            } else {
+                this._iridofotoEl.style.display = "none";
+            }
+        });
+
+        this._fileOEEl.addEventListener('change',e=>{
+            
+            // código para converter para base64
+            let reader = new FileReader();
+            reader.onloadend = e => {
+                this._olhoEsquerdo.src = reader.result;
+            };
+            reader.readAsDataURL(this._fileOEEl.files[0]);
+            
+        });
+
+        this._fileODEl.addEventListener('change',e=>{
+            
+            // código para converter para base64
+            let reader = new FileReader();
+            reader.onloadend = e => {
+                this._olhoDireito.src = reader.result;
+            };
+            reader.readAsDataURL(this._fileODEl.files[0]);
+            
         });
 
         new AppHelp();
@@ -145,6 +192,8 @@ class AppAttendance{
         json['_attendance'] = this._inputAttendanceEl.value;
         json['_produts'] = this._inputProdutsEl.value;
         json['_idClient'] = this._idClient;
+        
+
 
         return json;
     }
@@ -182,6 +231,11 @@ class AppAttendance{
                 this._terapiaEl.value = attendance['_terapia'];
                 this._inputAttendanceEl.value = attendance['_attendance'];
 				this._inputProdutsEl.value = attendance['_produts'];
+                if (this._terapiaEl.value == 'iridofoto') {
+                    this._iridofotoEl.style.display = "inline-block";
+                    this._olhoEsquerdo.src = attendance['_OE'];
+                    this._olhoDireito.src = attendance['_OD'];
+                }
                                 
             }catch(e){
                 console.error(e);
@@ -231,7 +285,8 @@ class AppAttendance{
                         
                         btn.innerHTML = terapia  + ' - ' + attendance['_date'].substr(8,2) + '/' + attendance['_date'].substr(5,2) + '/' + attendance['_date'].substr(0,4);
                         
-                        btn.onclick = () => {
+                        btn.onclick = (e) => {
+                            e.preventDefault();
                             new AppAttendance(this._idClient, attendance['_id']);
                         };
 
