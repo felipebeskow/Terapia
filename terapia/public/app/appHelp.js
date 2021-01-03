@@ -21,18 +21,16 @@ class AppHelp {
         this._appEl.appendChild(buttonHelp);
 
         document.querySelector('#help').addEventListener('click', e=> {
-
-            this.data['class'] = JSON.stringify(appTerapia);
-            this.data['context'] = JSON.stringify(appTerapia._appEl.innerHTML);
             
             this._appEl.innerHTML =`
                 <input id="mensagem"></input>
                 <button id="btnmensagem">Enviar</button>
             `;
 
-            this.data['mensagem'] = document.querySelector('#mensagem').value;
+            this.data['tela'] = window.tela;
 
             document.querySelector("#btnmensagem").addEventListener('click', e=> {
+                this.data['mensagem'] = document.querySelector('#mensagem').value;
                 this.sendEmail();
                 window.location.reload();
             }); 
@@ -52,7 +50,9 @@ class AppHelp {
     sendEmail(){
         let ajax = new XMLHttpRequest();
 
-        ajax.open('POST', '/h');
+        ajax.open('PUT', '/h');
+
+        this.data['_idLogin'] = window.localStorage.getItem('id');
 
         ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
 

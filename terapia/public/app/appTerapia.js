@@ -44,6 +44,7 @@ class AppTerapia{
             </form>
         `;
 
+        window.tela = 'Incial';
         new AppHelp();
 
         this._inputSearchEl = this._appEl.querySelector('#input-search');
@@ -69,6 +70,7 @@ class AppTerapia{
             ajax.open('PUT', '/c');
 
             ajax.onloadend = event => {
+                console.log(ajax.responseText);
 
                 try{
                     
@@ -80,7 +82,9 @@ class AppTerapia{
                 }
 
             }
-            
+
+            ajax.onerror = error => console.error(error);
+
             ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
             ajax.send(json);
         } catch(e){
@@ -90,6 +94,7 @@ class AppTerapia{
     }
 
     scrollClients(f){
+        console.log(this._clients);
         this._clients['clients'].forEach((e)=>{       
             f(e);
         });

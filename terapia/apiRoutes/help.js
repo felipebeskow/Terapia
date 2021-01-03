@@ -1,23 +1,26 @@
 const nodemailer = require("nodemailer");
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 module.exports = app => {
-    app.post('/h',(req,res)=>{
+    app.put('/h',(req,res)=>{
         app.auth(XMLHttpRequest,req,res,()=>{
-
             let transport = nodemailer.createTransport({
-                host: 'smtp.umbler.com',
-                port: 587,
-                requireTLS: true,
+                host: app.config.emailSender.host,
+                port: app.config.emailSender.port,
+                requireTLS: app.config.emailSender.requireTLS,
                 auth: {
-                    user: 'felipe@beskow.net.br',
-                    pass: '***REMOVED***'
+                    user: app.config.emailSender.auth.user,
+                    pass: app.config.emailSender.auth.pass
                 }
             });
             const message = {
-                from: 'felipe@beskow.net.br',
-                to: 'felipebeskow@outlook.com',
-                subject: 'Help Terapia',
-                html: `${JSON.stringify(req.body)}`
+                from: app.config.emailSender.auth.user,
+                to: app.config.emailReceiver,
+                subject: 'Pedido de Suporte (no-reply)',
+                html: 'Bom dia,<br>' +
+                    'há uma solicitação de suporte na Tela ' + req.body.tela + '.<br>' +
+                    'Segue a mensagem:<br>' + req.body.mensagem + '<br>' +
+                    'Mensagem gerada automaticamente pelo AppTerapia'
             };
             transport.sendMail(message, function (err, info) {
                 if (err) {

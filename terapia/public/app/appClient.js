@@ -29,6 +29,7 @@ class AppClient{
                 </table>
             </form>
             `;
+            window.tela = 'Cliente';
             
             this._nameEl = document.querySelector('#input-name');
             this._birthEl = document.querySelector('#input-birth');

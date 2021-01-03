@@ -77,7 +77,7 @@ module.exports = app => {
         });
     });
     app.post('/l/:passadmin',(req,res)=>{
-        if (req.params.passadmin == '***REMOVED***') {
+        if (req.params.passadmin == app.config.passwordAdmin) {
             req.body['_password'] = CryptoJS.MD5(req.body['_password']).toString();
             dbLogin.insert(req.body,(e,user)=>{
                 if (e){

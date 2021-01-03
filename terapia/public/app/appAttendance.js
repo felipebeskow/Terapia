@@ -46,6 +46,8 @@ class AppAttendance{
             <div id="history"></div>
         `;
 
+        window.tela = 'Atendimento';
+
         this._dateEl = document.querySelector('#input-date');
         this._terapiaEl = document.querySelector('#input-terapia');
         this._inputAttendanceEl = document.querySelector('#input-attendance');
@@ -140,7 +142,8 @@ class AppAttendance{
                 this._client = JSON.parse(ajax.responseText)['user'];
                 document.querySelector('#show-client').innerHTML = `
                     Cliente:  ${this._client['_name']}<br>
-                    Profissão: ${this._client['_profession']}
+                    Profissão: ${this._client['_profession']}<br>
+                    Idade: ${new Date().getFullYear() - this._client['_birth'].substr(0,4)} anos
                 `;                
             }catch(e){
                 console.error(e);
