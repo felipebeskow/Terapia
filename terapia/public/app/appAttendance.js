@@ -123,6 +123,16 @@ class AppAttendance{
                 this._olhoDireito.src = reader.result;
             };
             reader.readAsDataURL(this._fileODEl.files[0]);
+
+            let ajax = new XMLHttpRequest();
+
+            ajax.open('PUT', 'a/iridofoto');
+
+            ajax.onload = event => {
+                console.log(event);
+            };
+
+            ajax.send(new FormData().append('input-file', file));
             
         });
 

@@ -1,5 +1,6 @@
 let NeDB = require('nedb');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
+var formidable = require('formidable');
 
 let db = new NeDB({
     filename:'db/attendance.db',
@@ -23,6 +24,24 @@ module.exports = app =>{
             });
         });
 
+    });
+
+    app.put('a/iridofo', (req,res)=>{
+        let form = new formidable.IncomingForm({
+            uploadDir: './upload', 
+            keepExtensions: true
+        });
+
+        form.parse(req, (err,fields,files)=>{
+            if(err){
+                console.error(err);
+                res.status(400).json({
+                    error:err
+                });
+            } else {
+                res.status(200).json({oi:'oi'});
+            }
+        });
     });
 
     app.post('/a',(req,res)=>{

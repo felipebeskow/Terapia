@@ -5,6 +5,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const consign = require("consign");
 var fs = require('fs');
+var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -35,7 +36,7 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/app', terapia);
 
-app.auth = function(XMLHttpRequest,req,res,f) {
+app.auth = function(xmlhttprequest,req,res,f) {
   let ajax = new XMLHttpRequest();
   let message = '';
   let passou = false;
@@ -68,6 +69,24 @@ app.auth = function(XMLHttpRequest,req,res,f) {
 
   ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
   ajax.send(message);
+};
+
+app.authentic = (idLogin) => {
+  let ajax = new XMLHttpRequest();
+
+  ajax.open('PUT', app.config.host + '/lr');
+
+  ajax.onload = e => {
+    try{
+      return ((JSON.parse(ajax.responseText)!=undefined) && (JSON.parse(ajax.responseText)['error']==undefined));
+    } catch(error) {
+      console.error(error);
+      return false;
+    }
+  };
+
+  ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+  ajax.send(`_id=${idLogin}`);
 };
 
 consign().include('apiRoutes').into(app);
