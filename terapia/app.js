@@ -71,19 +71,23 @@ app.auth = function(xmlhttprequest,req,res,f) {
   ajax.send(message);
 };
 
-app.authentic = (idLogin) => {
+app.authentic = (idLogin, resolve, reject) => {
   let ajax = new XMLHttpRequest();
 
   ajax.open('PUT', app.config.host + '/lr');
 
   ajax.onload = e => {
     try{
-      return ((JSON.parse(ajax.responseText)!=undefined) && (JSON.parse(ajax.responseText)['error']==undefined));
+      if (JSON.parse(ajax.responseText)._id === idLogin){
+        console.log("login aprovado");
+        resolve();
+      }
     } catch(error) {
       console.error(error);
-      return false;
+      reject();
     }
   };
+  ajax.onerror = () => {reject()};
 
   ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
   ajax.send(`_id=${idLogin}`);

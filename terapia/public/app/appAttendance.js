@@ -58,6 +58,8 @@ class AppAttendance{
         this._fileODEl = document.querySelector('#fileOD');
         this._olhoEsquerdo = document.querySelector("#olhoEsquerdo");
         this._olhoDireito = document.querySelector("#olhoDireito");
+        this._uploadOE = '';
+        this._uploadOD = '';
 
         this.load();
 
@@ -118,25 +120,11 @@ class AppAttendance{
         this._fileODEl.addEventListener('change',e=>{
             
             // código para converter para base64
-            /*let reader = new FileReader();
+            let reader = new FileReader();
             reader.onloadend = e => {
                 this._olhoDireito.src = reader.result;
             };
-            reader.readAsDataURL(this._fileODEl.files[0]);*/
-
-            let ajax = new XMLHttpRequest();
-
-            ajax.open('PUT', '/iridofoto');
-
-            ajax.onload = event => {
-                console.log(ajax.responseText);
-            };
-
-            let formdata = new FormData();
-
-            formdata.append('input-file', this._fileODEl.files[0]);
-
-            ajax.send(formdata);
+            reader.readAsDataURL(this._fileODEl.files[0]);
             
         });
 
@@ -170,26 +158,45 @@ class AppAttendance{
     }
 
     save(){
-        
-        let ajax = new XMLHttpRequest();
 
-        let data = this.prepareData(this.attendanceToJSON());
-        
-        if (this._id == -1){ 
-            ajax.open('POST', '/a');
-        }else{ 
-            ajax.open('POST', `/a/${this._id}`);
-        }
+        let ajaxIridofoto = new XMLHttpRequest();
 
-        ajax.onloadend = event =>{
-            alert("Atendimento salvo!");
-            window.location.reload();
+        ajaxIridofoto.open('PUT', '/iridofoto');
+
+        ajaxIridofoto.onload = event => {
+
+            this._uploadOE = JSON.parse(ajaxIridofoto.responseText).oe;
+            this._uploadOD = JSON.parse(ajaxIridofoto.responseText).od;
+
+            let ajaxSave = new XMLHttpRequest();
+
+            let data = this.prepareData(this.attendanceToJSON());
+            
+            if (this._id == -1){ 
+                ajaxSave.open('POST', '/a');
+            }else{ 
+                ajaxSave.open('POST', `/a/${this._id}`);
+            }
+    
+            ajaxSave.onloadend = event =>{
+                alert("Atendimento salvo!");
+                window.location.reload();
+            };
+    
+            ajaxSave.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+            ajaxSave.send(data);            
         };
 
-        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-        ajax.send(data);
+        ajaxIridofoto.onerror = err => {console.error(err)};
 
-        
+        let formdata = new FormData();
+
+        formdata.append('id', window.localStorage.getItem('id'));
+        formdata.append('oe', this._fileOEEl.files[0]);
+        formdata.append('od', this._fileODEl.files[0]);
+
+        ajaxIridofoto.send(formdata);
+
     }
 
     validateAttendance(){
@@ -209,8 +216,8 @@ class AppAttendance{
         json['_attendance'] = this._inputAttendanceEl.value;
         json['_produts'] = this._inputProdutsEl.value;
         json['_idClient'] = this._idClient;
-        
-
+        json['_oe'] = this._uploadOE;
+        json['_od'] = this._uploadOD;
 
         return json;
     }
@@ -250,8 +257,8 @@ class AppAttendance{
 				this._inputProdutsEl.value = attendance['_produts'];
                 if (this._terapiaEl.value == 'iridofoto') {
                     this._iridofotoEl.style.display = "inline-block";
-                    this._olhoEsquerdo.src = attendance['_OE'];
-                    this._olhoDireito.src = attendance['_OD'];
+                    this._olhoEsquerdo.src = '/download/idLogin/' + window.localStorage.getItem('id') + '/file/' + attendance['_oe'];
+                    this._olhoDireito.src = '/download/idLogin/' + window.localStorage.getItem('id') + '/file/' + attendance['_od'];
                 }
                                 
             }catch(e){

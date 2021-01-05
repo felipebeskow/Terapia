@@ -1,6 +1,7 @@
 let NeDB = require('nedb');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 var formidable = require('formidable');
+var path = require('path');
 
 let db = new NeDB({
     filename:'db/attendance.db',
@@ -32,18 +33,47 @@ module.exports = app =>{
             keepExtensions: true
         });
 
-        console.log('oi, upload sendo recebido');
-
         form.parse(req, (err,fields,files)=>{
             if(err){
                 console.error(err);
-                res.status(401).json({
+                res.status(507).json({
                     error:err
                 });
             } else {
-                res.status(200).json({fields,files});
+                app.authentic(fields.id, ()=>{
+                    res.status(200).json({
+                        oe: files.oe.path,
+                        od: files.od.path
+                    });
+                }, ()=>{
+                    res.status(511).json({
+                        error:"erro ao autenticar",
+                        teste: auth
+                    });
+                });
+                
             }
         });
+    });
+
+    app.get('/download/idLogin/:id/file/upload/:file', (req,res)=>{
+
+        try {
+
+            let id = req.params.id;
+            let file = req.params.file;
+    
+            let filepath = path.resolve(__dirname + '/../' + file);
+    
+            console.log(`filepath:${filepath}, id:${id}, file:${file}`);
+    
+            res.type('image/png').sendFile(filepath);
+            
+        }catch(error){
+            console.log(error);
+            res.status(404).end();
+        }
+        
     });
 
     app.post('/a',(req,res)=>{
@@ -55,8 +85,8 @@ module.exports = app =>{
                 '_attendance':req.body['_attendance'],
                 '_produts':req.body['_produts'],
                 '_idClient':req.body['_idClient'],
-                '_OE':req.body['_OE'],
-                '_OD':req.body['_OD']
+                '_od':req.body['_od'],
+                '_oe':req.body['_oe']
             }, (err,attendance)=>{
                 if(err){
                     console.error(err);
@@ -97,8 +127,8 @@ module.exports = app =>{
                 '_attendance':req.body['_attendance'],
                 '_produts':req.body['_produts'],
                 '_idClient':req.body['_idClient'],
-                '_OE':req.body['_OE'],
-                '_OD':req.body['_OD']
+                '_oe':req.body['_oe'],
+                '_od':req.body['_od']
             }, err => {
                 if (err){
                     console.error(err);
