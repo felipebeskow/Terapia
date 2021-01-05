@@ -70,8 +70,7 @@ class AppTerapia{
             ajax.open('PUT', '/c');
 
             ajax.onloadend = event => {
-                console.log(ajax.responseText);
-
+                
                 try{
                     
                     this._clients = JSON.parse(ajax.responseText);
@@ -87,6 +86,7 @@ class AppTerapia{
 
             ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
             ajax.send(json);
+
         } catch(e){
             console.error(e);
         }
@@ -94,7 +94,6 @@ class AppTerapia{
     }
 
     scrollClients(f){
-        console.log(this._clients);
         this._clients['clients'].forEach((e)=>{       
             f(e);
         });

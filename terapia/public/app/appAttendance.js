@@ -28,12 +28,12 @@ class AppAttendance{
                         <figure>
                             <img id='olhoEsquerdo' src='../img/1.png' id='imgOE'>
                             <figcaption> Olho esquerdo </figcaption><br>
-                            <input type='file' id='fileOE'></input>
+                            <input type='file' accept='image/*' id='fileOE'></input>
                         </figure>
                         <figure>
                             <img id='olhoDireito' src='../img/2.png' id='imgOD'>
                             <figcaption> Olho direito </figcaption>
-                            <input type='file' id='fileOD'></input>
+                            <input type='file' accept='image/*' id='fileOD'></input>
                         </figure>
                     </div><br> 
                     <button id="btn-back" onclick="window.location.reload()"> Voltar </button>
@@ -118,21 +118,25 @@ class AppAttendance{
         this._fileODEl.addEventListener('change',e=>{
             
             // código para converter para base64
-            let reader = new FileReader();
+            /*let reader = new FileReader();
             reader.onloadend = e => {
                 this._olhoDireito.src = reader.result;
             };
-            reader.readAsDataURL(this._fileODEl.files[0]);
+            reader.readAsDataURL(this._fileODEl.files[0]);*/
 
             let ajax = new XMLHttpRequest();
 
-            ajax.open('PUT', 'a/iridofoto');
+            ajax.open('PUT', '/iridofoto');
 
             ajax.onload = event => {
-                console.log(event);
+                console.log(ajax.responseText);
             };
 
-            ajax.send(new FormData().append('input-file', file));
+            let formdata = new FormData();
+
+            formdata.append('input-file', this._fileODEl.files[0]);
+
+            ajax.send(formdata);
             
         });
 

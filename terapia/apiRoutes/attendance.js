@@ -26,20 +26,22 @@ module.exports = app =>{
 
     });
 
-    app.put('a/iridofo', (req,res)=>{
+    app.put('/iridofoto', (req,res)=>{
         let form = new formidable.IncomingForm({
             uploadDir: './upload', 
             keepExtensions: true
         });
 
+        console.log('oi, upload sendo recebido');
+
         form.parse(req, (err,fields,files)=>{
             if(err){
                 console.error(err);
-                res.status(400).json({
+                res.status(401).json({
                     error:err
                 });
             } else {
-                res.status(200).json({oi:'oi'});
+                res.status(200).json({fields,files});
             }
         });
     });
