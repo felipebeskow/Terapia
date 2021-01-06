@@ -20,8 +20,7 @@ class AppAttendance{
                         <option value="iridofoto">Iridofoto</option>
                         <option value="reflexoterapia">Reflexoterapia</option>
                     </select>&nbsp&nbsp&nbsp
-                    <label for="input-date">Data:</label><input type="date" id="input-date" required></input>&nbsp&nbsp&nbsp
-                    <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button><br>
+                    <label for="input-date">Data:</label><input type="date" id="input-date" required></input><br>
                     <label for="input-attendance">Atendimento: </label><br><textarea id="input-attendance"></textarea><br>
                     <label for="input-produts">Produtos: </label><br><textarea id="input-produts"></textarea><br>
                     <div id='iridofoto' style='display: none'>
@@ -73,11 +72,6 @@ class AppAttendance{
         this.getClient();
         this.getAttendances();
 
-        document.querySelector('#btn-client').addEventListener('click', e=>{
-            e.preventDefault();
-            this.appClient = new AppClient(true, this._idClient, true);
-        });
-
         document.querySelector('#btn-save').addEventListener('click', e=>{
             e.preventDefault();
             if(this.validateAttendance())
@@ -88,7 +82,29 @@ class AppAttendance{
 
         document.querySelector("#btn-clean").addEventListener('click', e=>{
             e.preventDefault();
-            new AppAttendance(this._idClient);
+            console.log('limpar');
+            
+            this._dateEl.disabled = false;
+            this._terapiaEl.disabled = false;
+            this._inputAttendanceEl.disabled = false;
+            this._inputProdutsEl.disabled = false;
+            this._fileOEEl.disabled = false;
+            this._fileODEl.disabled = false;
+
+            this._terapiaEl.value = '';
+            this._dateEl.valueAsDate = new Date();
+            this._inputAttendanceEl.value = '';
+            this._inputProdutsEl.value = '';
+            this._fileOEEl = '';
+            this._fileODEl = '';
+            this._olhoEsquerdo.src = '../img/1.png';
+            this._olhoDireito.src = '../img/2.png';
+
+            this._id = -1;
+
+            this.getClient();
+            this.getAttendances();
+
         });
 
         this._dateEl.addEventListener('keydown', e=>{
@@ -141,12 +157,25 @@ class AppAttendance{
 
         ajax.onloadend = event => {
             try{
+
                 this._client = JSON.parse(ajax.responseText)['user'];
+
                 document.querySelector('#show-client').innerHTML = `
-                    Cliente:  ${this._client['_name']}<br>
-                    Profissão: ${this._client['_profession']}<br>
-                    Idade: ${new Date().getFullYear() - this._client['_birth'].substr(0,4)} anos
-                `;                
+                <div>    
+                    <div>
+                        Cliente:  ${this._client['_name']}<br>
+                        Profissão: ${this._client['_profession']}<br>
+                        Idade: ${new Date().getFullYear() - this._client['_birth'].substr(0,4)} anos
+                    </div> 
+                    <div> <br> <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button> </div>
+                </div> 
+                `;  
+
+                document.querySelector('#btn-client').addEventListener('click', e=>{
+                    e.preventDefault();
+                    this.appClient = new AppClient(true, this._idClient, true);
+                });
+
             }catch(e){
                 console.error(e);
             }
@@ -158,6 +187,14 @@ class AppAttendance{
     }
 
     save(){
+        if((this._terapiaEl.value == 'iridofoto') && ((this._fileODEl != '')||(this._fileOEEl != ''))){
+            this.saveIridofoto();
+        }else{
+            this.saveAttendance();
+        }
+    }
+
+    saveIridofoto(){
 
         let ajaxIridofoto = new XMLHttpRequest();
 
@@ -165,26 +202,11 @@ class AppAttendance{
 
         ajaxIridofoto.onload = event => {
 
-            this._uploadOE = JSON.parse(ajaxIridofoto.responseText).oe;
-            this._uploadOD = JSON.parse(ajaxIridofoto.responseText).od;
+            if (this._fileOEEl.value != '') this._uploadOE = JSON.parse(ajaxIridofoto.responseText).oe;
+            if (this._fileODEl.value != '') this._uploadOD = JSON.parse(ajaxIridofoto.responseText).od;
 
-            let ajaxSave = new XMLHttpRequest();
-
-            let data = this.prepareData(this.attendanceToJSON());
-            
-            if (this._id == -1){ 
-                ajaxSave.open('POST', '/a');
-            }else{ 
-                ajaxSave.open('POST', `/a/${this._id}`);
-            }
-    
-            ajaxSave.onloadend = event =>{
-                alert("Atendimento salvo!");
-                window.location.reload();
-            };
-    
-            ajaxSave.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-            ajaxSave.send(data);            
+            this.saveAttendance();
+          
         };
 
         ajaxIridofoto.onerror = err => {console.error(err)};
@@ -192,11 +214,33 @@ class AppAttendance{
         let formdata = new FormData();
 
         formdata.append('id', window.localStorage.getItem('id'));
-        formdata.append('oe', this._fileOEEl.files[0]);
-        formdata.append('od', this._fileODEl.files[0]);
+        if (this._fileOEEl.value != '') formdata.append('oe', this._fileOEEl.files[0]);
+        if (this._fileODEl.value != '') formdata.append('od', this._fileODEl.files[0]);
 
         ajaxIridofoto.send(formdata);
 
+
+
+    }
+
+    saveAttendance(){
+        let ajaxSave = new XMLHttpRequest();
+
+        let data = this.prepareData(this.attendanceToJSON());
+        
+        if (this._id == -1){ 
+            ajaxSave.open('POST', '/a');
+        }else{ 
+            ajaxSave.open('POST', `/a/${this._id}`);
+        }
+
+        ajaxSave.onloadend = event =>{
+            alert("Atendimento salvo!");
+            window.location.reload();
+        };
+
+        ajaxSave.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajaxSave.send(data);
     }
 
     validateAttendance(){
@@ -251,14 +295,27 @@ class AppAttendance{
                 attendance = attendance['attendance'];
 
                 this._id = attendance['_id'];
+
                 this._dateEl.value = attendance['_date'];
+                this._dateEl.disabled = true;
+                
                 this._terapiaEl.value = attendance['_terapia'];
+                this._terapiaEl.disabled = true;
+                
                 this._inputAttendanceEl.value = attendance['_attendance'];
-				this._inputProdutsEl.value = attendance['_produts'];
+                this._inputAttendanceEl.disabled = true;
+                
+                this._inputProdutsEl.value = attendance['_produts'];
+                this._inputProdutsEl.disabled = true;
+                
                 if (this._terapiaEl.value == 'iridofoto') {
                     this._iridofotoEl.style.display = "inline-block";
+
                     this._olhoEsquerdo.src = '/download/idLogin/' + window.localStorage.getItem('id') + '/file/' + attendance['_oe'];
+                    this._fileOEEl.disabled = true;
+
                     this._olhoDireito.src = '/download/idLogin/' + window.localStorage.getItem('id') + '/file/' + attendance['_od'];
+                    this._fileODEl.disabled = true;
                 }
                                 
             }catch(e){
@@ -272,6 +329,9 @@ class AppAttendance{
     }
 
     getAttendances(){
+
+        this._historyEl.innerHTML = '';
+
         let ajax = new XMLHttpRequest();
         let message = `_idLogin=${localStorage.getItem('id')}`;
 

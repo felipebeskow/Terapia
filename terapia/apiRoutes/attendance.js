@@ -40,15 +40,20 @@ module.exports = app =>{
                     error:err
                 });
             } else {
+                let oe = '';
+                let od = '';
+
+                if (files.oe != undefined) oe = files.oe.path;
+                if (files.od != undefined) od = files.od.path;
+
                 app.authentic(fields.id, ()=>{
                     res.status(200).json({
-                        oe: files.oe.path,
-                        od: files.od.path
+                        oe,
+                        od
                     });
                 }, ()=>{
                     res.status(511).json({
-                        error:"erro ao autenticar",
-                        teste: auth
+                        error:"erro ao autenticar"
                     });
                 });
                 
@@ -63,7 +68,7 @@ module.exports = app =>{
             let id = req.params.id;
             let file = req.params.file;
     
-            let filepath = path.resolve(__dirname + '/../' + file);
+            let filepath = path.resolve(__dirname + '/../upload/' + file);
     
             console.log(`filepath:${filepath}, id:${id}, file:${file}`);
     
