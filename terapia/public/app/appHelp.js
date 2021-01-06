@@ -6,7 +6,7 @@ class AppHelp {
 
         let buttonHelp = document.createElement("div");
 
-        this.data = {};
+        var formData = new FormData();
 
         buttonHelp.innerHTML = `
             <button id='help'>Me Ajuda!</button>
@@ -21,18 +21,42 @@ class AppHelp {
         this._appEl.appendChild(buttonHelp);
 
         document.querySelector('#help').addEventListener('click', e=> {
+
+            html2canvas(document.querySelector("#app")).then(canvas => {
+                window.print = canvas;
+            });
             
             this._appEl.innerHTML =`
                 <input id="mensagem"></input>
                 <button id="btnmensagem">Enviar</button>
             `;
 
-            this.data['tela'] = window.tela;
+            formData.append('tela', window.tela);
+            formData.append('idLogin', window.localStorage.getItem('id'));
 
             document.querySelector("#btnmensagem").addEventListener('click', e=> {
-                this.data['mensagem'] = document.querySelector('#mensagem').value;
-                this.sendEmail();
-                window.location.reload();
+
+                formData.append('mensagem', document.querySelector('#mensagem').value);
+                
+                window.print.toBlob( blob => {
+                    formData.append('print', blob, 'print.png');
+                    
+                    let ajax = new XMLHttpRequest();
+
+                    ajax.open('PUT', '/help');
+
+                    ajax.onerror = error=>{
+                        console.error(error);
+                    };
+
+                    ajax.onloadend = ()=>{
+                        window.location.reload();
+                    };
+
+                    ajax.send(formData);
+                    
+
+                });
             }); 
 
         });
@@ -48,27 +72,6 @@ class AppHelp {
     }
 
     sendEmail(){
-        let ajax = new XMLHttpRequest();
-
-        ajax.open('PUT', '/h');
-
-        this.data['_idLogin'] = window.localStorage.getItem('id');
-
-        ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
-
-        ajax.send(this.prepareData(this.data));
-
-    }
-
-    prepareData(data){
-
-        if(typeof data == 'string') return data;
-
-        let pairs = Object.keys(data).map(key=>{
-            return [key, data[key]].map(encodeURIComponent).join('=');
-        }).join('&');
-
-        return pairs;
 
     }
 

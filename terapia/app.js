@@ -79,7 +79,7 @@ app.authentic = (idLogin, resolve, reject) => {
   ajax.onload = e => {
     try{
       if (JSON.parse(ajax.responseText)._id === idLogin){
-        console.log("login aprovado");
+        console.log("login aprovado", JSON.parse(ajax.responseText)._id);
         resolve();
       }
     } catch(error) {
