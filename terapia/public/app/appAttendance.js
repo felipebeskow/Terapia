@@ -9,6 +9,9 @@ class AppAttendance{
         this._appEl = document.querySelector('#app');
 
         this._appEl.innerHTML = `
+            <div id="preview" center style="position: absolute">
+                <img id="previewImg">
+            </div>
             <h1>Atendimento</h1>
             <div>
                 <h4 id="show-client"></h4>
@@ -59,12 +62,15 @@ class AppAttendance{
         this._olhoDireito = document.querySelector("#olhoDireito");
         this._uploadOE = '';
         this._uploadOD = '';
+        this._preview = document.querySelector('#preview');
 
         this.load();
 
     }
 
     load(){
+
+        this.showPreview();
 
         if (this._id != -1) this.getAttendance();
         else this._dateEl.valueAsDate = new Date();
@@ -144,7 +150,32 @@ class AppAttendance{
             
         });
 
+        this._preview.addEventListener('click', e=> {
+            this.showPreview();
+        });
+
+        this._olhoEsquerdo.addEventListener('click', e=>{
+            this.showPreview('show');
+            document.querySelector('#previewImg').src = this._olhoEsquerdo.src;
+        });
+
+        this._olhoDireito.addEventListener('click', e=>{
+            this.showPreview('show');
+            document.querySelector('#previewImg').src = this._olhoDireito.src;
+        });
+
         new AppHelp();
+    }
+
+    showPreview(show=''){
+        if (show == 'show'){
+            this._preview.style.display = "flex";
+            this._terapiaEl.style.visibility = "hidden";
+        } else {
+            this._preview.style.display = "none";
+            this._terapiaEl.style.visibility = "visible";
+
+        }
     }
 
     getClient(){
