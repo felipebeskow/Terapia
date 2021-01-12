@@ -1,5 +1,4 @@
-terapia/db/
-terapia/node_modules/
+
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
@@ -14,6 +13,8 @@ lerna-debug.log*
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+upload/upload*
+help/upload*
 
 # Runtime data
 pids
@@ -46,6 +47,7 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+db/
 
 # TypeScript v1 declaration files
 typings/
