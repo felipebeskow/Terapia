@@ -8,6 +8,11 @@ let db = new NeDB({
     autoload:true,
 });
 
+let dbIridofoto = new NeDB({
+    filename:'db/logUploadIridofoto.db',
+    autoload:true,
+});
+
 module.exports = app =>{
 
     app.put('/a',(req,res)=>{
@@ -56,8 +61,26 @@ module.exports = app =>{
                         error:"erro ao autenticar"
                     });
                 });
+
+                dbIridofoto.insert({
+                    oe,
+                    od
+                });
                 
             }
+        });
+    });
+
+    app.put('/iridofoto/log', (req,res)=>{
+        app.auth(XMLHttpRequest,req,res,()=>{
+            dbIridofoto.find().exec((error,uploads)=>{
+                if (error){
+                    console.error(error);
+                    res.status(400).json({ error });
+                }else{
+                    res.status(200).json({ uploads });
+                }
+            });
         });
     });
 
