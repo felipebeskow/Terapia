@@ -9,7 +9,7 @@ class AppAttendance{
         this._appEl = document.querySelector('#app');
 
         this._appEl.innerHTML = `
-            <div id="preview" center style="position: absolute">
+            <div id="preview" >
                 <img id="previewImg">
             </div>
             <h1>Atendimento</h1>
@@ -38,8 +38,8 @@ class AppAttendance{
                             <input type='file' accept='image/*' id='fileOD'></input>
                         </figure>
                     </div><br> 
-                    <button id="btn-back" onclick="window.location.reload()"> Voltar </button>
-                    <button id="btn-clean"> Limpar </button>
+                    <button id="btn-back" onclick="window.location.reload()"> Voltar  </button>
+                    <button id="btn-clean"> Novo atendimento </button>
                     <button id="btn-save" type="submit"> Salvar </button>
                 </form>
             </div>
