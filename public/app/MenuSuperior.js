@@ -10,6 +10,7 @@ class MenuSuperior {
 
         buttonHelp.innerHTML = `
             <button id='help'>Me Ajuda!</button>
+            <button id='backup'> Fazer cópia de segurança </button>
             <button id='logout'>Sair</button>
         `;
         
@@ -59,6 +60,10 @@ class MenuSuperior {
                 });
             }); 
 
+        });
+
+        document.querySelector("#backup").addEventListener('click', e=>{
+            window.location.replace(`${window.location.protocol}//${window.location.hostname}:${window.location.port}/backup/id/${window.localStorage.getItem('id')}/backup.zip`);
         });
 
         document.querySelector('#logout').addEventListener('click', e=>{

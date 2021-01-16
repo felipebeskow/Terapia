@@ -60,5 +60,29 @@ module.exports = app => {
         });
     });
 
+    app.get('/backup/id/:id/backup.zip',(req,res)=>{
+
+        app.authentic(req.params.id, ()=>{
+        
+            var exec = require('child_process').exec;
+            const cmd = '../scripts/backup.sh';
+
+            exec(cmd, {
+                cwd: __dirname
+                }, (err, stdout, stderr) => {
+                    console.log(stdout);
+
+                    let filepath = path.resolve(__dirname + '/../bkp/bkp.zip');
+
+                    res.type('.zip').sendFile(filepath);
+                    
+                    if (err) {
+                        console.log(err);
+                        res.status(500).json({err});
+                    }
+            });
+        });
+    });
+
     
 };

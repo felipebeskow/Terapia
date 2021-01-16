@@ -96,7 +96,7 @@ module.exports = app =>{
             console.log(`filepath:${filepath}, id:${id}, file:${file}`);
     
             app.authentic(id,()=>{
-                res.type('image/png').sendFile(filepath);
+                res.type('image/jpg').sendFile(filepath);
             }, ()=>{
                 res.status(511).json({
                     error:"erro ao autenticar"
