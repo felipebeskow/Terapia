@@ -80,6 +80,7 @@ class AppAttendance{
 
         document.querySelector('#btn-save').addEventListener('click', e=>{
             e.preventDefault();
+            this.showPreview('loading');
             if(this.validateAttendance())
                 this.save();
             else 
@@ -171,6 +172,10 @@ class AppAttendance{
         if (show == 'show'){
             this._preview.style.display = "flex";
             this._terapiaEl.style.visibility = "hidden";
+        } else if (show=='loading') {
+            this._preview.style.display = "flex";
+            this._terapiaEl.style.visibility = "hidden";
+            document.querySelector('#previewImg').src = '../img/loading.svg';
         } else {
             this._preview.style.display = "none";
             this._terapiaEl.style.visibility = "visible";
@@ -196,7 +201,7 @@ class AppAttendance{
                     <div>
                         Cliente:  ${this._client['_name']}<br>
                         Profissão: ${this._client['_profession']}<br>
-                        Idade: ${new Date().getFullYear() - this._client['_birth'].substr(0,4)} anos
+                        Idade: ${this.calculaIdade(this._client['_birth'])} 
                     </div> 
                     <div> <br> <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button> </div>
                 </div> 
@@ -215,6 +220,49 @@ class AppAttendance{
         ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
         ajax.send(message);
         
+    }
+
+    calculaIdade(clientBirth){
+
+        return Math.floor(Math.ceil(Math.abs(new Date(clientBirth).getTime() - new Date().getTime()) / (1000 * 3600 * 24)) / 365.25) + ' anos';
+
+
+        /*
+        var d = new Date,
+        ano_atual = d.getFullYear(),
+        mes_atual = d.getMonth() + 1,
+        dia_atual = d.getDate(),
+
+        ano_aniversario = +ano_aniversario,
+        mes_aniversario = +mes_aniversario,
+        dia_aniversario = +dia_aniversario,
+
+        quantos_anos = ano_atual - ano_aniversario;
+
+        if (mes_atual < mes_aniversario || mes_atual == mes_aniversario && dia_atual < dia_aniversario) {
+            quantos_anos--;
+        }
+
+        return quantos_anos < 0 ? 0 : quantos_anos;
+        */
+        
+        /*
+
+        var dias = diff / 86400000;
+
+        console.log(dias);
+        dias -= dias % 30;
+        console.log(dias);
+
+        var meses = dias / 30;
+
+        console.log(meses);
+        meses -= meses % 12;
+        console.log(meses);
+
+        var anos = meses / 12;
+
+        return ` ${anos} anos, ${meses} meses, ${dias} dias`;*/
     }
 
     save(){
@@ -266,6 +314,7 @@ class AppAttendance{
         }
 
         ajaxSave.onloadend = event =>{
+            this.showPreview();
             alert("Atendimento salvo!");
             window.location.reload();
         };
