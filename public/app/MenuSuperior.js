@@ -1,4 +1,4 @@
-class AppHelp {
+class MenuSuperior {
 
     constructor(){
         

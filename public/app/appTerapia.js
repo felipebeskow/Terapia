@@ -45,7 +45,7 @@ class AppTerapia{
         `;
 
         window.tela = 'Incial';
-        new AppHelp();
+        new MenuSuperior();
 
         this._inputSearchEl = this._appEl.querySelector('#input-search');
         this._datalistSearchEl = this._appEl.querySelector('#clients');

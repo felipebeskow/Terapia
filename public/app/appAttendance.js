@@ -31,8 +31,7 @@ class AppAttendance{
                             <img id='olhoEsquerdo' src='../img/1.png' id='imgOE'>
                             <figcaption> Olho esquerdo </figcaption><br>
                             <input type='file' accept='image/*' id='fileOE'></input>
-                        </figure>
-                        <figure>
+                        </figure><figure>
                             <img id='olhoDireito' src='../img/2.png' id='imgOD'>
                             <figcaption> Olho direito </figcaption>
                             <input type='file' accept='image/*' id='fileOD'></input>
