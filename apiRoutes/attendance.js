@@ -18,7 +18,7 @@ module.exports = app =>{
     app.put('/a',(req,res)=>{
         
         app.auth(XMLHttpRequest,req,res,()=>{
-            db.find({}).sort({_date:-1}).exec((err,attendances)=>{
+            db.find({ $not: { '_disable': 'true'} }).sort({_date:-1}).exec((err,attendances)=>{
                 if (err){
                     console.error(err);
                     res.status(400).json({
@@ -120,7 +120,8 @@ module.exports = app =>{
                 '_produts':req.body['_produts'],
                 '_idClient':req.body['_idClient'],
                 '_od':req.body['_od'],
-                '_oe':req.body['_oe']
+                '_oe':req.body['_oe'],
+                '_disable':'false'
             }, (err,attendance)=>{
                 if(err){
                     console.error(err);
@@ -162,7 +163,8 @@ module.exports = app =>{
                 '_produts':req.body['_produts'],
                 '_idClient':req.body['_idClient'],
                 '_oe':req.body['_oe'],
-                '_od':req.body['_od']
+                '_od':req.body['_od'],
+                '_disable':req.body['_disable']
             }, err => {
                 if (err){
                     console.error(err);

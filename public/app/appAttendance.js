@@ -40,6 +40,7 @@ class AppAttendance{
                     <button id="btn-back" onclick="window.location.reload()"> Voltar  </button>
                     <button id="btn-clean"> Novo atendimento </button>
                     <button id="btn-save" type="submit"> Salvar </button>
+                    <button id="btn-disable"> Excluir Atendimento </button>
                 </form>
             </div>
             <br><br>
@@ -111,6 +112,11 @@ class AppAttendance{
             this.getClient();
             this.getAttendances();
 
+        });
+
+        document.querySelector('#btn-disable').addEventListener('click', e=>{
+            e.preventDefault();
+            this.disableAttendance();
         });
 
         this._dateEl.addEventListener('keydown', e=>{
@@ -196,14 +202,14 @@ class AppAttendance{
                 this._client = JSON.parse(ajax.responseText)['user'];
 
                 document.querySelector('#show-client').innerHTML = `
-                <div>    
-                    <div>
-                        Cliente:  ${this._client['_name']}<br>
-                        Profissão: ${this._client['_profession']}<br>
-                        Idade: ${this.calculaIdade(this._client['_birth'])} 
+                    <div>    
+                        <div>
+                            Cliente:  ${this._client['_name']}<br>
+                            Profissão: ${this._client['_profession']}<br>
+                            Idade: ${this.calculaIdade(this._client['_birth'])} 
+                        </div> 
+                        <div> <br> <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button> </div>
                     </div> 
-                    <div> <br> <button id="btn-client" type="submit"> Editar Cadastro de Cliente </button> </div>
-                </div> 
                 `;  
 
                 document.querySelector('#btn-client').addEventListener('click', e=>{
@@ -293,7 +299,7 @@ class AppAttendance{
         return false;
     }
 
-    attendanceToJSON(){
+    attendanceToJSON(disable = false){
         let json = {};
 
         json['_idLogin'] = localStorage.getItem('id');
@@ -304,6 +310,12 @@ class AppAttendance{
         json['_idClient'] = this._idClient;
         json['_oe'] = this._uploadOE;
         json['_od'] = this._uploadOD;
+
+        if(disable) {
+            json['_disable'] = 'true';
+        } else {
+            json['_disable'] = 'false';
+        }
 
         return json;
     }
@@ -433,5 +445,23 @@ class AppAttendance{
 
         ajax.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
         ajax.send(message);
+    }
+
+    disableAttendance(){
+        
+        let ajaxDisable = new XMLHttpRequest();
+
+        let data = this.prepareData(this.attendanceToJSON(true));
+        
+        ajaxDisable.open('POST', `/a/${this._id}`);
+
+        ajaxDisable.onloadend = event =>{
+            this.showPreview();
+            alert("Atendimento excluído!");
+            window.location.reload();
+        };
+
+        ajaxDisable.setRequestHeader('Content-Type','application/x-www-form-urlencoded');
+        ajaxDisable.send(data);
     }
 }
