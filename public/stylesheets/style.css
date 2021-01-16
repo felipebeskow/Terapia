@@ -55,8 +55,7 @@ img{
   left: 0;
   left: 0;
   bottom: 0;
-  background-color: #adb7c2;
-  opacity: 0.75;
+  background-color: rgba(173, 183, 194, 0.75);
   z-index: 999;
 }
 
