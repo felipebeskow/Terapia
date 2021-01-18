@@ -170,7 +170,7 @@ class AppAttendance{
             document.querySelector('#previewImg').src = this._olhoDireito.src;
         });
 
-        new AppHelp();
+        new MenuSuperior();
     }
 
     showPreview(show=''){

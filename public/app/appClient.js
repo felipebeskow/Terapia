@@ -148,7 +148,7 @@ class AppClient{
             }
         });
 
-        new AppHelp();
+        new MenuSuperior();
     }
 
     clientToJSON(){
