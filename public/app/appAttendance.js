@@ -89,11 +89,7 @@ class AppAttendance{
         
         document.querySelector("#btn-clean").addEventListener('click', e=>{
             e.preventDefault();
-            console.log('limpar');
-            
-            new AppAttendance(this.idClient);
-            
-
+            new AppAttendance(this._idClient);
         });
 
         document.querySelector('#btn-disable').addEventListener('click', e=>{
