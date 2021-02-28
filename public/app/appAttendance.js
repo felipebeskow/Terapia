@@ -86,31 +86,13 @@ class AppAttendance{
             else 
                 alert('Favor preencher os campos de Terapia, Data e Atendimento corretamente');
         });
-
+        
         document.querySelector("#btn-clean").addEventListener('click', e=>{
             e.preventDefault();
             console.log('limpar');
             
-            this._dateEl.disabled = false;
-            this._terapiaEl.disabled = false;
-            this._inputAttendanceEl.disabled = false;
-            this._inputProdutsEl.disabled = false;
-            this._fileOEEl.disabled = false;
-            this._fileODEl.disabled = false;
-
-            this._terapiaEl.value = '';
-            this._dateEl.valueAsDate = new Date();
-            this._inputAttendanceEl.value = '';
-            this._inputProdutsEl.value = '';
-            this._fileOEEl = '';
-            this._fileODEl = '';
-            this._olhoEsquerdo.src = '../img/1.png';
-            this._olhoDireito.src = '../img/2.png';
-
-            this._id = -1;
-
-            this.getClient();
-            this.getAttendances();
+            new AppAttendance(this.idClient);
+            
 
         });
 
@@ -371,6 +353,9 @@ class AppAttendance{
                     this._olhoDireito.src = '/download/idLogin/' + window.localStorage.getItem('id') + '/file/' + attendance['_od'];
                     this._fileODEl.disabled = true;
                 }
+
+                document.querySelector('#btn-save').disabled = true;
+
                                 
             }catch(e){
                 console.error(e);
