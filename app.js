@@ -2,16 +2,16 @@
 
 
 import { fastify } from "fastify";
-//import { DatabaseMemory } from "./database-memory.js";
+import 'dotenv/config';
 
-const server = fastify();
+const server = fastify()
 
 
-server.get('/', () => {
+server.get('/hello', () => {
     return 'Hello World'
 })
 
 
 server.listen({
-    port:3333
+    port:process.env.PORT ?? 3333
 })
