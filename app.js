@@ -1,8 +1,8 @@
 // tutorial https://www.youtube.com/watch?v=hHM-hr9q4mo
+import { fastify } from 'fastify'
+import InitSQL from './scr/init_sql.js'
 
-
-import { fastify } from "fastify";
-import 'dotenv/config';
+// console.log(process.env.DATABASE_URL)
 
 const server = fastify()
 
@@ -11,7 +11,9 @@ server.get('/hello', () => {
     return 'Hello World'
 })
 
+InitSQL();
+
 
 server.listen({
-    port:process.env.PORT ?? 3333
+    port:process.env.PORT ?? 3000
 })
