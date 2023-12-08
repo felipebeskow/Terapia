@@ -1,6 +1,6 @@
 // tutorial https://www.youtube.com/watch?v=hHM-hr9q4mo
 import { fastify } from 'fastify'
-import InitSQL from './scr/init_sql.js'
+import InitSQL from './scr/initSql.js'
 
 // console.log(process.env.DATABASE_URL)
 

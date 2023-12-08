@@ -18,5 +18,9 @@ CREATE TABLE IF NOT EXISTS aut_password (
   login_id UUID references aut_login(id),
   actual_flag boolean default false
 );
-insert into aut_login(login, display_name) values ('admin','User default');
+insert into aut_login(login,display_name)
+select 
+	'admin' login, 
+	'User default' display_name
+where not exists (select * from aut_login);
 commit;
