@@ -1,6 +1,7 @@
 // tutorial https://www.youtube.com/watch?v=hHM-hr9q4mo
 import { fastify } from 'fastify'
 import InitSQL from './scr/initSql.js'
+//import loginController from './scr/controller/login.js'
 
 // console.log(process.env.DATABASE_URL)
 
@@ -11,7 +12,7 @@ server.get('/hello', () => {
     return 'Hello World'
 })
 
-InitSQL();
+await InitSQL();
 
 
 server.listen({
