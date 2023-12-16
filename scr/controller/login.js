@@ -11,7 +11,7 @@ class loginController {
     }
 
     async validate(login){
-        const response = await sql`
+        const login = await sql`
         select 
             case 
             when count(*) = 1 then true 
@@ -26,8 +26,26 @@ class loginController {
             and ap.password like ${CryptoJS.SHA3(login.password).toString()}
         `
         
-        if (response.count != 1) return false
-        return response[0].approved_login
+        if (login.count == 1 && login[0].approved_login){
+            const log = await sql`
+            insert into aut_login_log (
+                login_id,
+                last_update_login,
+                creation_login,log
+            ) values (
+                ${login[0].id},
+                ${login[0].id},
+                ${login[0].id},
+                ${{
+                    login: login[0].id,
+                    env: process.env
+                }}
+            ) returning id`
+            if (log.count == 1 && log[0].id){
+                return log[0].id
+            }
+        }
+        return null;
 
     }
 

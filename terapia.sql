@@ -30,3 +30,12 @@ select
 	true actual_flag
 where not exists (select * from aut_password);
 commit;
+CREATE TABLE IF NOT EXISTS public.aut_login_log(
+    id uuid NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
+    login_id uuid,
+    last_update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_update_login uuid,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    creation_login uuid,
+    log json NOT NULL
+);
