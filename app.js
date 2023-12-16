@@ -12,7 +12,8 @@ server.get('/hello', () => {
 
 await InitSQL();
 
-await server.register(require('./login.js'))
+import loginRest from './scr/api/login.js'
+server.register(loginRest)
 
 server.listen({
     port:process.env.PORT ?? 3000

@@ -1,5 +1,10 @@
 import fp from 'fastify-plugin'
 
-module.exports = fp((fastify,opts,done)=>{
+const loginRest = fp((fastify,opts,done)=>{
+    fastify.get('/login',(request,reply)=>{
+        reply.statusCode(200);
+    })
     done()
 })
+
+export default loginRest
