@@ -1,3 +1,4 @@
+--SET client_min_messages = 'error';
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE TABLE IF NOT EXISTS aut_login (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
