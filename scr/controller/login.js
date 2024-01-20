@@ -111,6 +111,43 @@ class loginController {
         return rowLogin;
     }
 
+    async authentication(request, reply) {
+    
+        if (request.headers.authorization) {
+        
+            if (request.headers.authorization.split(" ")[0] == 'Basic'){
+                const [username, password] = Buffer.from(request.headers.authorization.split(" ")[1], 'base64').toString().split(':')
+            
+                const login = await this.validate({
+                    login: username,
+                    password: password
+                })
+                
+                if (login.approved_login) {
+                    request.context.login = login
+                } else {
+                    reply.code(401).send()
+                }
+    
+            } else if (request.headers.authorization) {
+                
+                const login = await this.validateToken(request.headers.authorization)
+                
+                if (login.approved_login) {
+                    request.context.login = login
+                } else {
+                    reply.code(401).send()
+                }
+                
+            } else {
+                reply.code(401).send()
+    
+            }
+        } else {
+            reply.code(401).send()
+        }
+    }
+
     changePassword(){
 
     }
