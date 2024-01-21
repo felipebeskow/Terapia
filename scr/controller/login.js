@@ -26,38 +26,7 @@ class loginController {
             and ap.password like ${CryptoJS.SHA3(login.password).toString()}
         `
 
-        loginSQL.map(row =>{
-            rowLogin = row
-        })
-
-        rowLogin.approved_login = false
-        
-        if (rowLogin.id){
-
-            const log = await sql`
-                insert into aut_login_log (
-                    login_id,
-                    last_update_login,
-                    creation_login,
-                    log
-                ) values (
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${{
-                        login: rowLogin.id,
-                        env: process.env
-                    }}
-                ) returning id
-            `
-
-            log.map(rowLog=>{
-                rowLogin.token = rowLog.id
-                rowLogin.approved_login = true
-            })
-        }
-
-        return rowLogin;
+        return await this.getToken(loginSQL);
 
     }
 
@@ -77,38 +46,7 @@ class loginController {
             group by al.id
         `
 
-        loginSQL.map(row =>{
-            rowLogin = row
-        })
-
-        rowLogin.approved_login = false
-        
-        if (rowLogin.id){
-
-            const log = await sql`
-                insert into aut_login_log (
-                    login_id,
-                    last_update_login,
-                    creation_login,
-                    log
-                ) values (
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${{
-                        login: rowLogin.id,
-                        env: process.env
-                    }}
-                ) returning id
-            `
-
-            log.map(rowLog=>{
-                rowLogin.token = rowLog.id
-                rowLogin.approved_login = true
-            })
-        }
-
-        return rowLogin;
+        return await this.getToken(loginSQL);
     }
 
     async authentication(request, reply) {
@@ -146,6 +84,43 @@ class loginController {
         } else {
             reply.code(401).send()
         }
+    }
+
+    async getToken(login){
+        let rowLogin = {}
+
+        login.map(row =>{
+            rowLogin = row
+        })
+        
+        rowLogin.approved_login = false
+        
+        if (rowLogin.id){
+
+            const log = await sql`
+                insert into aut_login_log (
+                    login_id,
+                    last_update_login,
+                    creation_login,
+                    log
+                ) values (
+                    ${rowLogin.id},
+                    ${rowLogin.id},
+                    ${rowLogin.id},
+                    ${{
+                        login: rowLogin.id,
+                        env: process.env
+                    }}
+                ) returning id
+            `
+
+            log.map(rowLog=>{
+                rowLogin.token = rowLog.id
+                rowLogin.approved_login = true
+            })
+        }
+
+        return rowLogin;
     }
 
     changePassword(){
