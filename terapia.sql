@@ -1,13 +1,18 @@
 --SET client_min_messages = 'error';
+
+--habilita uuid no banco
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
+--cria tabelas
 CREATE TABLE IF NOT EXISTS aut_login (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
-  login TEXT,
+  login TEXT UNIQUE,
   last_update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   last_update_login UUID,
   creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   creation_login UUID,
-  display_name TEXT
+  display_name TEXT,
+  disable_date TIMESTAMP
 );
 CREATE TABLE IF NOT EXISTS aut_password (
   id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
@@ -19,6 +24,18 @@ CREATE TABLE IF NOT EXISTS aut_password (
   login_id UUID references aut_login(id),
   actual_flag boolean default false
 );
+CREATE TABLE IF NOT EXISTS public.aut_login_log(
+    id uuid NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
+    login_id uuid,
+    last_update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    last_update_login uuid,
+    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    creation_login uuid,
+    log json NOT NULL
+);
+
+
+--insere usuário admin
 insert into aut_login(login,display_name)
 select 
 	'admin' login, 
@@ -31,12 +48,3 @@ select
 	true actual_flag
 where not exists (select * from aut_password);
 commit;
-CREATE TABLE IF NOT EXISTS public.aut_login_log(
-    id uuid NOT NULL DEFAULT uuid_generate_v4() PRIMARY KEY,
-    login_id uuid,
-    last_update_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    last_update_login uuid,
-    creation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    creation_login uuid,
-    log json NOT NULL
-);

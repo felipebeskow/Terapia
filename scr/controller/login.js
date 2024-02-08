@@ -1,130 +1,149 @@
 import CryptoJS from 'crypto-js'
 import { sql } from '../../db.js'
+import TokenInvalid from '../error/tokenInvalid.js'
+import ImpossibleDeleteUser from '../error/impossibleDeleteUser.js';
+import AuthenticationController from './authentication.js';
 
 class loginController {
-    create(login){
+    async create(login,token){
+        const user = await new AuthenticationController().validateToken(token)
 
-    }
-
-    list(){
-
-    }
-
-    async validate(login){
-        
-        let rowLogin = {}
-
-        const loginSQL = await sql`
-        select 
-            al.*
-        from 
-            aut_login al,
-            aut_password ap
-        where al.id = ap.login_id
-            and ap.actual_flag = true
-            and al.login = ${login.login}
-            and ap.password like ${CryptoJS.SHA3(login.password).toString()}
-        `
-
-        return await this.getToken(loginSQL);
-
-    }
-
-    async validateToken(token){
-        
-        let rowLogin = {}
-
-        const loginSQL = await sql`
-            select 
-                al.*
-            from 
-                aut_login al,
-                aut_login_log alog
-            where al.id = alog.login_id
-                and alog.id = ${token}
-                and alog.creation_date > CURRENT_TIMESTAMP - INTERVAL '3 hour'
-            group by al.id
-        `
-
-        return await this.getToken(loginSQL);
-    }
-
-    async authentication(request, reply) {
-    
-        if (request.headers.authorization) {
-        
-            if (request.headers.authorization.split(" ")[0] == 'Basic'){
-                const [username, password] = Buffer.from(request.headers.authorization.split(" ")[1], 'base64').toString().split(':')
-            
-                const login = await this.validate({
-                    login: username,
-                    password: password
-                })
-                
-                if (login.approved_login) {
-                    request.context.login = login
-                } else {
-                    reply.code(401).send()
-                }
-    
-            } else if (request.headers.authorization) {
-                
-                const login = await this.validateToken(request.headers.authorization)
-                
-                if (login.approved_login) {
-                    request.context.login = login
-                } else {
-                    reply.code(401).send()
-                }
-                
-            } else {
-                reply.code(401).send()
-    
-            }
-        } else {
-            reply.code(401).send()
+        if (!user) {
+            throw new TokenInvalid();
         }
-    }
 
-    async getToken(login){
-        let rowLogin = {}
-
-        login.map(row =>{
-            rowLogin = row
+        const insertLogin = await sql`
+            insert into aut_login (
+                login,
+                last_update_login,
+                creation_login,
+                display_name
+            ) values (
+                ${login.login},
+                ${user.id},
+                ${user.id},
+                ${login.display_name}
+            ) returning *
+        `
+        let rowInsert = {}
+        insertLogin.map(row=>{
+            rowInsert = row
         })
-        
-        rowLogin.approved_login = false
-        
-        if (rowLogin.id){
 
-            const log = await sql`
-                insert into aut_login_log (
-                    login_id,
-                    last_update_login,
-                    creation_login,
-                    log
-                ) values (
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${rowLogin.id},
-                    ${{
-                        login: rowLogin.id,
-                        env: process.env
-                    }}
-                ) returning id
-            `
-
-            log.map(rowLog=>{
-                rowLogin.token = rowLog.id
-                rowLogin.approved_login = true
-            })
-        }
-
-        return rowLogin;
+        return rowInsert
     }
 
-    changePassword(){
+    async list(filter){
+        let query
+        let result = []
+        if (filter){
+            query = await sql`
+                select 
+                    al.*
+                from 
+                    aut_login al
+                where display_name like ${ filter.display_name || sql`display_name`} || '%'
+                    and login like ${ filter.login || sql`login` } || '%'
+                group by al.id
+                order by al.login
+            `
+        } else {
+            query = await sql`
+                select 
+                    al.*
+                from 
+                    aut_login al
+                group by al.id
+                order by al.login
+            `
+        }
 
+        query.map(row => {
+            result.push(row)
+        })
+
+        return result
+
+    }
+
+    async set(login,loginId,autLoginId){
+        const updateLogin = await sql`
+            update aut_login
+            set ${sql({
+                ...login,
+                last_update_date: sql`now()`,
+                last_update_login: autLoginId
+            })}
+            where id = ${loginId}
+            returning *
+        `
+
+        let user
+        updateLogin.map(row=>{
+            user = row
+        })
+
+        return user
+    }
+
+    async changePassword(password,loginId,autLoginId){
+        await sql`
+            update aut_password
+                set actual_flag = false,
+                    last_update_date = now(),
+                    last_update_login = ${autLoginId}
+            where login_id = ${loginId}
+        `
+
+        const insertPassword = await sql`
+            insert into aut_password (
+                login_id,
+                password,
+                actual_flag,
+                last_update_login,
+                creation_login
+            ) select 
+                ${loginId} login_id, 
+                ${CryptoJS.SHA3(password)} password,
+                true actual_flag,
+                ${autLoginId} last_update_login,
+                ${autLoginId} creation_login
+            where not exists (
+                select 1 from aut_password ap
+                where ap.actual_flag = true
+                    and ap.login_id = ${loginId}
+            ) returning login_id, true new_password
+        `
+        let data 
+        insertPassword.map(row=>{
+            data = row
+        })
+
+        return data
+
+    }
+
+    async delete (loginIdDeleted,loginId){
+        const deleteUser = await sql`
+            update aut_login
+            set 
+                disable_date = CURRENT_TIMESTAMP,
+                last_update_login = ${loginId},
+                last_update_date = now()
+            where id = ${loginIdDeleted}
+            returning *
+        `
+        
+        if (deleteUser.count == 0){
+            throw new ImpossibleDeleteUser();
+        }
+
+        let user
+        deleteUser.map(row=>{
+            user = row
+        })
+
+        return user
     }
 }
 
